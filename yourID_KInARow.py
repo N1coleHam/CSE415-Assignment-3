@@ -1,0 +1,157 @@
+'''
+<yourID>_KInARow.py
+Authors: <your name(s) here, lastname first and partners separated by ";">
+  Example:  
+    Authors: Smith, Jane; Lee, Laura
+
+An agent for playing "K-in-a-Row with Forbidden Squares" and related games.
+
+THIS IS A TEMPLATE WITH STUBS FOR THE REQUIRED FUNCTIONS.
+YOU CAN ADD WHATEVER ADDITIONAL FUNCTIONS YOU NEED IN ORDER
+TO PROVIDE A GOOD STRUCTURE FOR YOUR IMPLEMENTATION.
+
+'''
+
+from agent_base import KAgent
+from game_types import State, Game_Type
+
+AUTHORS = 'Jane Smith and Laura Lee' 
+STUDENT_IDS = ['jsmith99', 'llee2039'] # The first ID here should
+# match the one in the file name, e.g., jsmith99_KInARow.py.
+
+import time # You'll probably need this to avoid losing a
+ # game due to exceeding a time limit.
+
+# Create your own type of agent by subclassing KAgent:
+
+class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
+    # knows how to instantiate your agent class.
+
+    def __init__(self, twin=False):
+        self.twin=twin
+        self.nickname = 'Nic'
+        if twin: self.nickname += '2'
+        self.long_name = 'Templatus Skeletus'
+        if twin: self.long_name += ' II'
+        self.persona = 'bland'
+        self.voice_info = {'Chrome': 10, 'Firefox': 2, 'other': 0}
+        self.playing = "don't know yet" # e.g., "X" or "O".
+        self.alpha_beta_cutoffs_this_turn = -1
+        self.num_static_evals_this_turn = -1
+        self.zobrist_table_num_entries_this_turn = -1
+        self.zobrist_table_num_hits_this_turn = -1
+        self.current_game_type = None
+        self.playing_mode = KAgent.DEMO
+
+    def introduce(self):
+        intro = '\nMy name is Templatus Skeletus.\n'+\
+            '"An instructor" made me.\n'+\
+            'Somebody please turn me into a real game-playing agent!\n'
+        if self.twin: intro += "By the way, I'm the TWIN.\n"
+        return intro
+
+    # Receive and acknowledge information about the game from
+    # the game master:
+    def prepare(
+        self,
+        game_type,
+        what_side_to_play,
+        opponent_nickname,
+        expected_time_per_move = 0.1, # Time limits can be
+                                      # changed mid-game by the game master.
+
+        utterances_matter=True):      # If False, just return 'OK' for each utterance,
+                                      # or something simple and quick to compute
+                                      # and do not import any LLM or special APIs.
+                                      # During the tournament, this will be False..
+       if utterances_matter:
+           pass
+           # Optionally, import your LLM API here.
+           # Then you can use it to help create utterances.
+
+       # Write code to save the relevant information in variables
+       # local to this instance of the agent.
+       # e.g., self.current_game_type = game_type  (needed by static_eval)
+       #        self.who_i_play = what_side_to_play
+       #        self.opponent_nickname = opponent_nickname
+
+       # TODO: add your initialization code above this line.
+       # IMPORTANT: return 'OK' to signal successful initialization.
+       # The autograder checks for this exact string before running any tests.
+       return "OK"
+   
+    # The core of your agent's ability should be implemented here:             
+    def make_move(self, current_state, current_remark, time_limit=1000,
+                  use_alpha_beta=True,
+                  use_zobrist_hashing=False, max_ply=3,
+                  special_static_eval_fn=None):
+        # --- HOW TO IMPLEMENT make_move ---
+        # 1. Generate candidate moves: iterate over rows and columns of
+        #    current_state.board; any square equal to ' ' is a legal move.
+        # 2. For each candidate position (i, j), build a successor state:
+        #      new_s = State(old=current_state)       # deep copy
+        #      new_s.board[i][j] = current_state.whose_move
+        #      new_s.change_turn()                    # switch X <-> O
+        # 3. Count blank squares before searching to detect a full board (draw)
+        #    and to limit recursion depth appropriately.
+        # 4. Call self.minimax(...) on the current state to get the best move.
+        # 5. Compose an utterance string appropriate to your agent's persona.
+        # 6. Return format:
+        #      DEMO / COMPETITION: [[move, new_state], utterance]
+        #      AUTOGRADER:         [[move, new_state, stats], utterance]
+        #    where stats is a dict with keys defined in agent_base.py, e.g.:
+        #      stats['alpha_beta_cutoffs_this_turn']        = self.alpha_beta_cutoffs_this_turn
+        #      stats['num_static_evals_this_turn']          = self.num_static_evals_this_turn
+        #      stats['zobrist_table_num_entries_this_turn'] = self.zobrist_table_num_entries_this_turn
+        #      stats['zobrist_table_num_hits_this_turn']    = self.zobrist_table_num_hits_this_turn
+
+        # PLACEHOLDER — replace everything below with your implementation:
+        a_default_move = (0, 0)
+        new_state = State(old=current_state)  # always deep-copy; never return the input state
+        new_remark = "I need to think of something appropriate."
+        return [[a_default_move, new_state], new_remark]
+
+    # The main adversarial search function:
+    def minimax(self,
+            state,
+            depth_remaining,
+            pruning=False,
+            alpha=None,
+            beta=None):
+        # --- HOW TO IMPLEMENT minimax ---
+        # Base cases — call static_eval and return its value:
+        #   - depth_remaining == 0  (depth limit reached)
+        #   - no blank squares remain on the board (draw)
+        #   - terminal win/loss state (optional; static_eval can handle this)
+        # Recursive case:
+        #   is_max = (state.whose_move == 'X')   # X maximizes, O minimizes
+        #   best_val = -inf if is_max else +inf
+        #   For each successor state generated by your move generator:
+        #     result = self.minimax(successor, depth_remaining - 1, pruning, alpha, beta)
+        #     Update best_val and best_move.
+        #     If pruning is True: check alpha/beta cutoff and break early.
+        #     Update alpha (if is_max) or beta (if not is_max) after each child.
+        # Return at minimum [score, best_move, best_state].
+        # Additional values after index 0 can carry info back to make_move.
+
+        default_score = 0  # replace with self.static_eval(state) at base cases
+        return [default_score, None, None]
+ 
+    def static_eval(self, state, game_type=None):
+        # Return a numeric score: positive = good for X, negative = good for O.
+        # Use game_type.k (the win length) to evaluate partial lines.
+        # IMPORTANT: k is NOT stored in the state — you must get it from game_type.
+        # In DEMO/COMPETITION mode game_type will be None; use self.current_game_type
+        # (which you should have saved during prepare).
+        if game_type is None:
+            game_type = self.current_game_type
+        return 0  # replace with your evaluation
+ 
+# OPTIONAL THINGS TO KEEP TRACK OF:
+
+#  WHO_MY_OPPONENT_PLAYS = other(WHO_I_PLAY)
+#  MY_PAST_UTTERANCES = []
+#  OPPONENT_PAST_UTTERANCES = []
+#  UTTERANCE_COUNT = 0
+#  REPEAT_COUNT = 0 or a table of these if you are reusing different utterances
+
