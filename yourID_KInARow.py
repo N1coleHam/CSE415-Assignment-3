@@ -1,8 +1,6 @@
 '''
 <yourID>_KInARow.py
-Authors: <your name(s) here, lastname first and partners separated by ";">
-  Example:  
-    Authors: Smith, Jane; Lee, Laura
+Authors: Nicole Ham, Rena Yin
 
 An agent for playing "K-in-a-Row with Forbidden Squares" and related games.
 
@@ -42,6 +40,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.zobrist_table_num_hits_this_turn = -1
         self.current_game_type = None
         self.playing_mode = KAgent.DEMO
+        self.special_static_eval_fn = None
 
     def introduce(self):
         intro = '\nMy name is Templatus Skeletus.\n'+\
@@ -105,11 +104,43 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         #      stats['zobrist_table_num_entries_this_turn'] = self.zobrist_table_num_entries_this_turn
         #      stats['zobrist_table_num_hits_this_turn']    = self.zobrist_table_num_hits_this_turn
 
-        # PLACEHOLDER — replace everything below with your implementation:
-        a_default_move = (0, 0)
-        new_state = State(old=current_state)  # always deep-copy; never return the input state
-        new_remark = "I need to think of something appropriate."
-        return [[a_default_move, new_state], new_remark]
+        # Reset per-turn statistics.
+        self.alpha_beta_cutoffs_this_turn = 0
+        self.num_static_evals_this_turn = 0
+        self.special_static_eval_fn = special_static_eval_fn
+
+        # Count blank squares to detect a full board and limit depth.
+        num_blanks = count_blanks(current_state)
+        depth = min(max_ply, num_blanks)
+
+        result = self.minimax(current_state, depth, pruning=use_alpha_beta,
+                              alpha=float('-inf'), beta=float('inf'))
+        best_move, best_state = result[1], result[2]
+
+        if best_move is None:
+            # Full board (or depth 0): no search possible, so take the first
+            # legal move if one exists.
+            successors = list(successors_and_moves(current_state))
+            if successors:
+                best_move, best_state = successors[0]
+            else:
+                best_move, best_state = None, State(old=current_state)
+                best_state.change_turn()
+
+        new_remark = "I'll play at " + str(best_move) + "."
+
+        if self.playing_mode != KAgent.AUTOGRADER:
+            return [[best_move, best_state], new_remark]
+
+        stats = {
+            'alpha_beta_cutoffs_this_turn': self.alpha_beta_cutoffs_this_turn,
+            'num_static_evals_this_turn': self.num_static_evals_this_turn,
+            'zobrist_table_num_entries_this_turn': self.zobrist_table_num_entries_this_turn,
+            'zobrist_table_num_hits_this_turn': self.zobrist_table_num_hits_this_turn,
+            'zobrist_num_useful_hits_for_minimax': -1,
+            'zobrist_num_useful_hits_for_ordering': -1
+        }
+        return [[best_move, best_state, stats], new_remark]
 
     # The main adversarial search function:
     def minimax(self,
@@ -134,8 +165,45 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Return at minimum [score, best_move, best_state].
         # Additional values after index 0 can carry info back to make_move.
 
-        default_score = 0  # replace with self.static_eval(state) at base cases
-        return [default_score, None, None]
+        # Base cases: game finished, depth limit reached, or no blank squares remain.
+        if state.finished or depth_remaining == 0 or count_blanks(state) == 0:
+            return [self.evaluate(state), None, None]
+
+        is_max = (state.whose_move == 'X')  # X maximizes, O minimizes
+        best_val = float('-inf') if is_max else float('inf')
+        best_move = None
+        best_state = None
+
+        for move, successor in successors_and_moves(state):
+            result = self.minimax(successor, depth_remaining - 1, pruning, alpha, beta)
+            val = result[0]
+
+            if (is_max and val > best_val) or (not is_max and val < best_val):
+                best_val = val
+                best_move = move
+                best_state = successor
+
+            if pruning:
+                if is_max:
+                    if best_val >= beta:
+                        self.alpha_beta_cutoffs_this_turn += 1
+                        break
+                    alpha = max(alpha, best_val)
+                else:
+                    if best_val <= alpha:
+                        self.alpha_beta_cutoffs_this_turn += 1
+                        break
+                    beta = min(beta, best_val)
+
+        return [best_val, best_move, best_state]
+
+    # Uses the special static evaluator when one was given (AUTOGRADER mode),
+    # otherwise our own static_eval.  Counts every evaluation.
+    def evaluate(self, state):
+        self.num_static_evals_this_turn += 1
+        if self.special_static_eval_fn is not None:
+            return self.special_static_eval_fn(state)
+        return self.static_eval(state, self.current_game_type)
  
     def static_eval(self, state, game_type=None):
         # Return a numeric score: positive = good for X, negative = good for O.
@@ -147,6 +215,22 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             game_type = self.current_game_type
         return 0  # replace with your evaluation
  
+# Count the blank (playable) squares on the board.
+def count_blanks(state):
+    return sum(row.count(' ') for row in state.board)
+
+# Generate [move, new_state] pairs in row-major order
+# (row by row, left to right), as required in AUTOGRADER mode.
+def successors_and_moves(state):
+    b = state.board
+    for i in range(len(b)):
+        for j in range(len(b[0])):
+            if b[i][j] != ' ': continue
+            new_s = State(old=state)       # deep copy
+            new_s.board[i][j] = state.whose_move
+            new_s.change_turn()            # switch X <-> O
+            yield [(i, j), new_s]
+
 # OPTIONAL THINGS TO KEEP TRACK OF:
 
 #  WHO_MY_OPPONENT_PLAYS = other(WHO_I_PLAY)
