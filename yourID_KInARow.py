@@ -12,6 +12,7 @@ TO PROVIDE A GOOD STRUCTURE FOR YOUR IMPLEMENTATION.
 
 from agent_base import KAgent
 from game_types import State, Game_Type
+from winTesterForK import winTesterForK
 
 AUTHORS = 'Jane Smith and Laura Lee' 
 STUDENT_IDS = ['jsmith99', 'llee2039'] # The first ID here should
@@ -41,6 +42,9 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.current_game_type = None
         self.playing_mode = KAgent.DEMO
         self.special_static_eval_fn = None
+        self.deadline = None         # time.time() value at which search must stop
+        self.search_root = None      # root state of the current search
+        self.preferred_move = None   # best root move from the previous depth
 
     def introduce(self):
         intro = '\nMy name is Templatus Skeletus.\n'+\
@@ -73,6 +77,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
        # e.g., self.current_game_type = game_type  (needed by static_eval)
        #        self.who_i_play = what_side_to_play
        #        self.opponent_nickname = opponent_nickname
+       self.current_game_type = game_type
 
        # TODO: add your initialization code above this line.
        # IMPORTANT: return 'OK' to signal successful initialization.
@@ -104,22 +109,46 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         #      stats['zobrist_table_num_entries_this_turn'] = self.zobrist_table_num_entries_this_turn
         #      stats['zobrist_table_num_hits_this_turn']    = self.zobrist_table_num_hits_this_turn
 
+        start = time.time()
+
         # Reset per-turn statistics.
         self.alpha_beta_cutoffs_this_turn = 0
         self.num_static_evals_this_turn = 0
         self.special_static_eval_fn = special_static_eval_fn
 
+        # Leave a safety margin so we return before the game master's limit.
+        if time_limit is None:
+            self.deadline = None
+        else:
+            self.deadline = start + TIME_SAFETY_FRACTION * time_limit
+
         # Count blank squares to detect a full board and limit depth.
         num_blanks = count_blanks(current_state)
-        depth = min(max_ply, num_blanks)
+        best_move, best_state = None, None
+        self.search_root = current_state
+        self.preferred_move = None
 
-        result = self.minimax(current_state, depth, pruning=use_alpha_beta,
-                              alpha=float('-inf'), beta=float('inf'))
-        best_move, best_state = result[1], result[2]
+        if self.playing_mode == KAgent.AUTOGRADER:
+            # Exactly one search at max_ply, in plain row-major order,
+            # so the leaf counts match what the autograder expects.
+            depths = [min(max_ply, num_blanks)]
+        else:
+            # Iterative deepening: search depth 1, 2, 3, ... until time runs
+            # out, keeping the result of the deepest search that finished.
+            depths = range(1, num_blanks + 1)
+
+        for depth in depths:
+            try:
+                result = self.minimax(current_state, depth, pruning=use_alpha_beta)
+            except SearchTimeout:
+                break
+            if result[1] is not None:
+                best_move, best_state = result[1], result[2]
+                self.preferred_move = best_move  # search it first next depth
 
         if best_move is None:
-            # Full board (or depth 0): no search possible, so take the first
-            # legal move if one exists.
+            # Full board, or time ran out before depth 1 finished:
+            # take the first legal move if one exists.
             successors = list(successors_and_moves(current_state))
             if successors:
                 best_move, best_state = successors[0]
@@ -165,16 +194,37 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Return at minimum [score, best_move, best_state].
         # Additional values after index 0 can carry info back to make_move.
 
+        # Give up on this search if we are out of time; make_move falls back
+        # to the result of the last depth that finished.
+        if self.deadline is not None and time.time() > self.deadline:
+            raise SearchTimeout()
+
         # Base cases: game finished, depth limit reached, or no blank squares remain.
         if state.finished or depth_remaining == 0 or count_blanks(state) == 0:
             return [self.evaluate(state), None, None]
+
+        # None means "no bound".
+        if alpha is None: alpha = float('-inf')
+        if beta is None: beta = float('inf')
 
         is_max = (state.whose_move == 'X')  # X maximizes, O minimizes
         best_val = float('-inf') if is_max else float('inf')
         best_move = None
         best_state = None
 
-        for move, successor in successors_and_moves(state):
+        children = successors_and_moves(state)
+        if state is self.search_root and self.preferred_move is not None \
+                and self.playing_mode != KAgent.AUTOGRADER:
+            # Try the previous depth's best move first for more cutoffs.
+            children = sorted(children, key=lambda c: c[0] != self.preferred_move)
+
+        game_type = self.current_game_type
+        for move, successor in children:
+            # A move that completes k in a row ends the game, so the
+            # successor is a leaf no matter how much depth remains.
+            if game_type is not None and \
+                    winTesterForK(successor, move, game_type.k) != 'No win':
+                successor.finished = True
             result = self.minimax(successor, depth_remaining - 1, pruning, alpha, beta)
             val = result[0]
 
@@ -215,6 +265,13 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             game_type = self.current_game_type
         return 0  # replace with your evaluation
  
+# Fraction of the time limit we allow ourselves to spend searching.
+TIME_SAFETY_FRACTION = 0.8
+
+# Raised inside minimax when the deadline for this move has passed.
+class SearchTimeout(Exception):
+    pass
+
 # Count the blank (playable) squares on the board.
 def count_blanks(state):
     return sum(row.count(' ') for row in state.board)
