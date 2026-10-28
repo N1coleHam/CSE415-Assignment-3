@@ -13,8 +13,8 @@ TO PROVIDE A GOOD STRUCTURE FOR YOUR IMPLEMENTATION.
 from agent_base import KAgent
 from game_types import State, Game_Type
 
-AUTHORS = 'Jane Smith and Laura Lee' 
-STUDENT_IDS = ['jsmith99', 'llee2039'] # The first ID here should
+AUTHORS = 'Nicole Ham and Rena Yin' 
+STUDENT_IDS = ['n1coleh', '[ID]'] # The first ID here should
 # match the one in the file name, e.g., jsmith99_KInARow.py.
 
 import time # You'll probably need this to avoid losing a
@@ -63,21 +63,18 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                                       # or something simple and quick to compute
                                       # and do not import any LLM or special APIs.
                                       # During the tournament, this will be False..
-       if utterances_matter:
-           pass
-           # Optionally, import your LLM API here.
-           # Then you can use it to help create utterances.
+        # Save the setup on this agent so other methods can use it later.
+        # Optionally, import your LLM API here.
+        # Then you can use it to help create utterances.
+        self.current_game_type = game_type
+        self.playing = what_side_to_play
+        self.opponent_nickname = opponent_nickname
+        self.expected_time_per_move = expected_time_per_move
+        self.utterances_matter = utterances_matter
 
-       # Write code to save the relevant information in variables
-       # local to this instance of the agent.
-       # e.g., self.current_game_type = game_type  (needed by static_eval)
-       #        self.who_i_play = what_side_to_play
-       #        self.opponent_nickname = opponent_nickname
-
-       # TODO: add your initialization code above this line.
-       # IMPORTANT: return 'OK' to signal successful initialization.
-       # The autograder checks for this exact string before running any tests.
-       return "OK"
+        # The autograder checks for this exact string before running any tests.
+        # The caller controls playing_mode; preserve its selected mode.
+        return "OK"
    
     # The core of your agent's ability should be implemented here:             
     def make_move(self, current_state, current_remark, time_limit=1000,
@@ -153,7 +150,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Base cases — call static_eval and return its value:
         #   - depth_remaining == 0  (depth limit reached)
         #   - no blank squares remain on the board (draw)
-        #   - terminal win/loss state (optional; static_eval can handle this)
+        #   - terminal win/loss state (do not generate moves after a win)
         # Recursive case:
         #   is_max = (state.whose_move == 'X')   # X maximizes, O minimizes
         #   best_val = -inf if is_max else +inf
@@ -166,7 +163,13 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Additional values after index 0 can carry info back to make_move.
 
         # Base cases: game finished, depth limit reached, or no blank squares remain.
+        # Stop at the depth limit or a draw, even without a finished flag.
         if state.finished or depth_remaining == 0 or count_blanks(state) == 0:
+            return [self.evaluate(state), None, None]
+
+        # Hypothetical successors do not have finished set by the game master.
+        # Detect wins from the board before allowing any further moves.
+        if has_winner(state, self.current_game_type.k):
             return [self.evaluate(state), None, None]
 
         is_max = (state.whose_move == 'X')  # X maximizes, O minimizes
@@ -200,21 +203,89 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
     # Uses the special static evaluator when one was given (AUTOGRADER mode),
     # otherwise our own static_eval.  Counts every evaluation.
     def evaluate(self, state):
+        # Return a numeric score: positive = good for X, negative = good for O.
+        # Use game_type.k (the win length) to evaluate partial lines.
+        # IMPORTANT: k is NOT stored in the state — you must get it from game_type.
+        # In DEMO/COMPETITION mode game_type will be None; use self.current_game_type
+        # (which you should have saved during prepare).
         self.num_static_evals_this_turn += 1
         if self.special_static_eval_fn is not None:
             return self.special_static_eval_fn(state)
         return self.static_eval(state, self.current_game_type)
  
     def static_eval(self, state, game_type=None):
-        # Return a numeric score: positive = good for X, negative = good for O.
-        # Use game_type.k (the win length) to evaluate partial lines.
-        # IMPORTANT: k is NOT stored in the state — you must get it from game_type.
-        # In DEMO/COMPETITION mode game_type will be None; use self.current_game_type
-        # (which you should have saved during prepare).
+        """Score potential winning segments: positive favors X, negative O.
+
+        Generalizes the unblocked-line heuristic from Adversarial Search I,
+        slides 9–11, to variable k and boards with forbidden squares.
+        """
         if game_type is None:
             game_type = self.current_game_type
-        return 0  # replace with your evaluation
+        if game_type is None:
+            raise ValueError("static_eval needs a game_type or a prior prepare call.")
+
+        board = state.board
+        rows, columns = len(board), len(board[0])
+        k = game_type.k
+        score = 0
+        # At most four segments start at each cell. This finite win score
+        # exceeds the sum of all possible nonwinning segment contributions.
+        win_score = 4 * rows * columns * 10**k + 1
+        directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
+
+        for row in range(rows):
+            for column in range(columns):
+                for dr, dc in directions:
+                    end_row = row + (k - 1) * dr
+                    end_column = column + (k - 1) * dc
+                    if not (0 <= end_row < rows and 0 <= end_column < columns):
+                        continue
+
+                    segment = [board[row + step * dr][column + step * dc]
+                               for step in range(k)]
+                    if '-' in segment:
+                        continue
+                    x_count = segment.count('X')
+                    o_count = segment.count('O')
+
+                    # Completed win dominates ordinary positional scores
+                    if x_count == k:
+                        return win_score
+                    if o_count == k:
+                        return -win_score
+
+                    # Neither player can complete a segment occupied by both
+                    if x_count and o_count:
+                        continue
+                    if x_count:
+                        score += 10**(x_count - 1)
+                    elif o_count:
+                        score -= 10**(o_count - 1)
+
+        if count_blanks(state) == 0:
+            return 0
+        return score
  
+def has_winner(state, k):
+    """Detect a winning line without changing the state or evaluating it."""
+    board = state.board
+    rows, columns = len(board), len(board[0])
+    for row in range(rows):
+        for column in range(columns):
+            token = board[row][column]
+            if token not in ('X', 'O'):
+                continue
+            for dr, dc in [(0, 1), (1, 0), (1, 1), (1, -1)]:
+                end_row = row + (k - 1) * dr
+                end_column = column + (k - 1) * dc
+                if not (0 <= end_row < rows and 0 <= end_column < columns):
+                    continue
+                if all(board[row + step * dr][column + step * dc] == token
+                       for step in range(1, k)):
+                    return True
+    return False
+
+
 # Count the blank (playable) squares on the board.
 def count_blanks(state):
     return sum(row.count(' ') for row in state.board)
