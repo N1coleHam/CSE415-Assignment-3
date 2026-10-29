@@ -1,5 +1,5 @@
 '''
-<yourID>_KInARow.py
+n1coleh_KInARow.py
 Authors: Nicole Ham, Rena Yin
 
 An agent for playing "K-in-a-Row with Forbidden Squares" and related games.
@@ -15,7 +15,7 @@ from game_types import State, Game_Type
 from winTesterForK import winTesterForK
 
 AUTHORS = 'Nicole Ham and Rena Yin' 
-STUDENT_IDS = ['n1coleh', '[ID]'] # The first ID here should
+STUDENT_IDS = ['n1coleh', 'yin123'] # The first ID here should
 # match the one in the file name, e.g., jsmith99_KInARow.py.
 
 import time # You'll probably need this to avoid losing a
