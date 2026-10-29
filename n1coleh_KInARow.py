@@ -69,6 +69,9 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.score_history = []      # backed-up score after each of our moves, from our side
         self.last_search = None      # numbers from the last search, for "how did you do that"
         self.previous_search = None  # search for the move the opponent just saw
+        self.game_history = []       # real moves/remarks, never minimax branches
+        self.history_complete = True
+        self._history_state = None   # copied board returned on our previous turn
 
     def introduce(self):
         if self.twin:
@@ -244,6 +247,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                             'zobrist_hits': self.zobrist_table_num_hits_this_turn,
                             'zobrist_useful_minimax': self.zobrist_num_useful_hits_for_minimax,
                             'zobrist_useful_ordering': self.zobrist_num_useful_hits_for_ordering}
+        history_entry = None
         if not self.utterances_matter:
             new_remark = 'OK'
         elif move_deadline is not None and time.perf_counter() >= move_deadline:
@@ -251,11 +255,19 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             new_remark = "No comment. Your move."
         else:
             try:
+                if self.playing_mode == KAgent.DEMO:
+                    history_entry = self.remember_turn(current_state, current_remark,
+                                                       best_move, best_state)
                 new_remark = self.compose_utterance(current_state, current_remark,
                                                     best_move, best_state, best_score)
             except Exception:
                 # Never forfeit a game over a remark.
                 new_remark = "No comment. Your move."
+
+        # Record the actual outgoing remark after composing it, so a narrative
+        # cannot quote its own as-yet-unspoken response.
+        if history_entry is not None:
+            history_entry['utterance'] = new_remark
 
         if self.playing_mode != KAgent.AUTOGRADER:
             return [[best_move, best_state], new_remark]
@@ -505,6 +517,57 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
  
     # ---- Dialog ----------------------------------------------------------
 
+    def remember_turn(self, state, remark, move, new_state):
+        """Observe the opponent's real move, then record our selected move."""
+        before = self._history_state or self.current_game_type.initial_state
+        same_size = (len(before.board) == len(state.board)
+                     and all(len(a) == len(b) for a, b in zip(before.board, state.board)))
+        changes = ([(r, c) for r in range(len(state.board))
+                    for c in range(len(state.board[r]))
+                    if before.board[r][c] != state.board[r][c]] if same_size else [])
+        opponent = other(state.whose_move)
+        legal_change = False
+        if same_size and len(changes) == 1:
+            r, c = changes[0]
+            legal_change = (before.board[r][c] == ' '
+                            and state.board[r][c] == opponent
+                            and before.whose_move == opponent)
+        if legal_change:
+            self._remember_move(before, state, changes[0], remark)
+        elif not same_size or changes or before.whose_move != state.whose_move:
+            # A skipped turn or mid-game starting position is an observation,
+            # not permission to invent who moved where.
+            self.history_complete = False
+            self.game_history.append({'player': None, 'move': None,
+                                      'board': [row[:] for row in state.board],
+                                      'whose_move': state.whose_move,
+                                      'utterance': remark, 'events': []})
+
+        entry = None
+        if move is not None:
+            entry = self._remember_move(state, new_state, move, '')
+        self._history_state = State(old=new_state)
+        return entry
+
+    def _remember_move(self, before, after, move, remark):
+        player = before.whose_move
+        k = self.current_game_type.k
+        events = []
+        if winTesterForK(after, move, k) != 'No win':
+            events.append({'kind': 'win'})
+        else:
+            if blocks_win(before, move, other(player), k):
+                events.append({'kind': 'blocked'})
+            threats = winning_squares(after, player, k)
+            if threats:
+                events.append({'kind': 'threat', 'squares': threats})
+        entry = {'player': player, 'move': tuple(move),
+                 'board': [row[:] for row in after.board],
+                 'whose_move': after.whose_move, 'utterance': remark,
+                 'events': events}
+        self.game_history.append(entry)
+        return entry
+
     # Build this turn's remark from the board, the search result, and the
     # opponent's last remark.  Rule-based: the most notable situation picks
     # a category of lines, then we may add a reply to the opponent or a
@@ -645,26 +708,64 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                          "That's the scoring system. The attitude is complimentary.")
         return ' '.join(parts)
 
-    # "What's your take on the game so far?": narrate our score trend and predict.
+    # Narrate recorded boards/actions/conversation, including this turn's move.
     def game_so_far(self):
-        history = self.score_history
-        if not history:
-            return "We haven't even started and I'm already ahead."
-        first, current = history[0], history[-1]
-        if current > first:
-            trend = ", so I've only gotten better while you've gotten worse"
-        elif current < first:
-            trend = ". You've made it closer than it should be, I'll give you that"
+        moves = [entry for entry in self.game_history if entry['move'] is not None]
+        if not moves:
+            return "No recorded moves yet. A riveting documentary about an empty notebook. Prediction: too early to call."
+        actor = lambda entry: 'I' if entry['player'] == self.playing else 'You'
+        parts = [f"My take, including the move I'm returning now: {len(moves)} recorded moves."]
+        if self.history_complete:
+            parts.append(f"{actor(moves[0])} opened at {moves[0]['move']}. That's where the plot began.")
         else:
-            trend = ". Perfectly balanced, as all things should be"
-        if current > 0:
-            winner = "me. Obviously."
-        elif current < 0:
-            winner = "you, technically, but only because of luck."
+            parts.append("Some turns weren't recorded, so I'm sticking to what I actually observed. No fan fiction.")
+
+        # Prefer actual wins/blocks, then fill remaining slots with threats.
+        notable = [i for i, entry in enumerate(moves)
+                   if any(e['kind'] in ('win', 'blocked') for e in entry['events'])][-2:]
+        if len(notable) < 2:
+            threats = [i for i, entry in enumerate(moves) if i not in notable
+                       and any(e['kind'] == 'threat' for e in entry['events'])]
+            notable += threats[-(2 - len(notable)):]
+        for i in sorted(notable):
+            entry = moves[i]
+            event = entry['events'][0]
+            if event['kind'] == 'win':
+                parts.append(f"{actor(entry)} completed {self.current_game_type.k} in a row at {entry['move']}.")
+            elif event['kind'] == 'blocked':
+                parts.append(f"{actor(entry)} blocked an immediate winning threat at {entry['move']}. Plot twist.")
+            else:
+                parts.append(f"{actor(entry)} left an immediate winning chance at {event['squares'][0]}.")
+        if not notable:
+            parts.append("No recorded wins or immediate-threat turning points yet. We're still in the trailer.")
+
+        # Quote an earlier opponent remark, not this request or our own reply.
+        quotes = [entry['utterance'] for entry in self.game_history
+                  if entry['player'] == other(self.playing) and entry['utterance']
+                  and entry['utterance'] not in GAME_MASTER_REMARKS
+                  and not any(trigger in entry['utterance'].lower()
+                              for trigger in ('take on the game', 'game so far', 'did that', 'do that'))]
+        if quotes:
+            quote = ' '.join(quotes[-1].split()[:10])[:100].replace('"', "'")
+            parts.append(f'Earlier you said "{quote}"; I kept the receipt.')
+
+        latest = moves[-1]
+        if any(e['kind'] == 'win' for e in latest['events']):
+            winner = 'I have won' if latest['player'] == self.playing else 'you have won'
+            parts.append(f"No prediction needed: {winner}. The board has spoken.")
+        elif not any(' ' in row for row in latest['board']):
+            parts.append("The board has no playable squares left and nobody won: it's a draw. Shared custody of disappointment.")
+        elif self.last_search is None or self.last_search['score'] is None or self.last_search['special_evaluator']:
+            parts.append("Prediction: not enough completed search evidence to call it. Even my ego needs data.")
         else:
-            winner = "me, because it's tied and I'm better."
-        return ("My take? " + str(len(history)) + " moves in, my evaluation went from "
-                + str(first) + " to " + str(current) + trend + ". Prediction: " + winner)
+            score = self.last_search['score'] * (1 if self.playing == 'X' else -1)
+            if score == 0:
+                parts.append("Prediction: too close to call; a draw is possible, not guaranteed. Annoyingly balanced.")
+            else:
+                favorite = 'me' if score > 0 else 'you'
+                parts.append(f"My completed {self.last_search['depth']}-ply search favors {favorite}. "
+                             "That's an estimate, not a trophy. The game isn't settled.")
+        return ' '.join(parts)
 
 def other(p):
     return 'O' if p == 'X' else 'X'
