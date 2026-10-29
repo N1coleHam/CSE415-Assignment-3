@@ -43,6 +43,14 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.num_static_evals_this_turn = -1
         self.zobrist_table_num_entries_this_turn = -1
         self.zobrist_table_num_hits_this_turn = -1
+        self.zobrist_table_num_lookups_this_turn = -1
+        self.zobrist_num_useful_hits_for_minimax = -1
+        self.zobrist_num_useful_hits_for_ordering = -1
+        self.zobrist_keys = None     # zobrist_keys[i][j][token] -> random 64-bit int
+        self.zobrist_side_key = None # XORed in when it is O's turn
+        self.transposition_table = {}  # hash -> (depth, value, flag, best_move)
+        self.use_zobrist = False     # whether the current search uses the table
+        self.root_hash = None
         self.current_game_type = None
         self.playing_mode = KAgent.DEMO
         self.special_static_eval_fn = None
@@ -97,6 +105,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.expected_time_per_move = expected_time_per_move
         self.utterances_matter = utterances_matter
         self.reset_dialog()
+        self.init_zobrist(game_type.n, game_type.m)
 
         # The autograder checks for this exact string before running any tests.
         # The caller controls playing_mode; preserve its selected mode.
@@ -151,6 +160,34 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         else:
             best_move, best_state = fallback
 
+        # Zobrist hashing: on when requested, and always in real games
+        # (DEMO/COMPETITION), where the game master never asks for it.
+        self.use_zobrist = use_zobrist_hashing or \
+            (self.playing_mode != KAgent.AUTOGRADER and ZOBRIST_IN_GAMES)
+        if self.use_zobrist:
+            board = current_state.board
+            if self.zobrist_keys is None or len(self.zobrist_keys) != len(board) \
+                    or len(self.zobrist_keys[0]) != len(board[0]):
+                self.init_zobrist(len(board), len(board[0]))
+            # The table persists between our moves in a game (positions repeat
+            # across turns), but test searches start clean so their stats are
+            # reproducible and special-evaluator values never mix with ours.
+            if self.playing_mode == KAgent.AUTOGRADER or special_static_eval_fn is not None \
+                    or len(self.transposition_table) > MAX_TABLE_ENTRIES:
+                self.transposition_table = {}
+            self.root_hash = self.zobrist_hash(current_state)
+            self.zobrist_table_num_entries_this_turn = 0
+            self.zobrist_table_num_lookups_this_turn = 0
+            self.zobrist_table_num_hits_this_turn = 0
+            self.zobrist_num_useful_hits_for_minimax = 0
+            self.zobrist_num_useful_hits_for_ordering = 0
+        else:
+            self.zobrist_table_num_entries_this_turn = -1
+            self.zobrist_table_num_lookups_this_turn = -1
+            self.zobrist_table_num_hits_this_turn = -1
+            self.zobrist_num_useful_hits_for_minimax = -1
+            self.zobrist_num_useful_hits_for_ordering = -1
+
         # Count blank squares to detect a full board and limit depth.
         num_blanks = count_blanks(current_state)
         best_score, depth_reached = None, 0
@@ -187,6 +224,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             self.deadline = None
             self.search_root = None
             self.preferred_move = None
+            self.use_zobrist = False
 
         self.previous_search = self.last_search
         self.last_search = {'depth': depth_reached,
@@ -200,7 +238,12 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                             'iterative_deepening': self.playing_mode != KAgent.AUTOGRADER,
                             'special_evaluator': special_static_eval_fn is not None,
                             'timed_out': timed_out,
-                            'used_fallback': used_fallback}
+                            'used_fallback': used_fallback,
+                            'zobrist_entries': self.zobrist_table_num_entries_this_turn,
+                            'zobrist_lookups': self.zobrist_table_num_lookups_this_turn,
+                            'zobrist_hits': self.zobrist_table_num_hits_this_turn,
+                            'zobrist_useful_minimax': self.zobrist_num_useful_hits_for_minimax,
+                            'zobrist_useful_ordering': self.zobrist_num_useful_hits_for_ordering}
         if not self.utterances_matter:
             new_remark = 'OK'
         elif move_deadline is not None and time.perf_counter() >= move_deadline:
@@ -222,8 +265,9 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             'num_static_evals_this_turn': self.num_static_evals_this_turn,
             'zobrist_table_num_entries_this_turn': self.zobrist_table_num_entries_this_turn,
             'zobrist_table_num_hits_this_turn': self.zobrist_table_num_hits_this_turn,
-            'zobrist_num_useful_hits_for_minimax': -1,
-            'zobrist_num_useful_hits_for_ordering': -1
+            'zobrist_num_useful_hits_for_minimax': self.zobrist_num_useful_hits_for_minimax,
+            'zobrist_num_useful_hits_for_ordering': self.zobrist_num_useful_hits_for_ordering,
+            'zobrist_table_num_lookups_this_turn': self.zobrist_table_num_lookups_this_turn
         }
         return [[best_move, best_state, stats], new_remark]
 
@@ -258,29 +302,67 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # to the result of the last depth that finished.
         self._check_search_deadline()
 
-        # Base cases: game finished, depth limit reached, or no blank squares remain.
-        # Stop at the depth limit or a draw, even without a finished flag.
-        if state.finished or depth_remaining == 0 or count_blanks(state) == 0:
-            return [self.evaluate(state), None, None]
-
-        # Hypothetical successors do not have finished set by the game master.
-        # Detect wins from the board before allowing any further moves.
-        if has_winner(state, self.current_game_type.k):
-            return [self.evaluate(state), None, None]
         # None means "no bound".
         if alpha is None: alpha = float('-inf')
         if beta is None: beta = float('inf')
+        is_root = state is self.search_root
 
+        # Zobrist lookup.  A deep-enough entry can answer this node outright
+        # (never at the root, which must return a real successor state);
+        # otherwise its stored best move is searched first.
+        key, table_move = None, None
+        if self.use_zobrist:
+            key = self.root_hash if is_root else getattr(state, 'zobrist_key', None)
+            if key is None:
+                key = self.zobrist_hash(state)
+            self.zobrist_table_num_lookups_this_turn += 1
+            entry = self.transposition_table.get(key)
+            if entry is not None:
+                self.zobrist_table_num_hits_this_turn += 1
+                entry_depth, entry_val, entry_flag, entry_move = entry
+                if entry_depth >= depth_remaining and not is_root and (
+                        entry_flag == EXACT
+                        or (entry_flag == LOWER and entry_val >= beta)
+                        or (entry_flag == UPPER and entry_val <= alpha)):
+                    self.zobrist_num_useful_hits_for_minimax += 1
+                    return [entry_val, None, None]
+                table_move = entry_move
+
+        # Base cases: game finished, depth limit reached, or no blank squares remain.
+        # Stop at the depth limit or a draw, even without a finished flag.
+        # Hypothetical successors do not have finished set by the game master,
+        # so also detect wins from the board before allowing any further moves.
+        if state.finished or count_blanks(state) == 0:
+            leaf_depth = TERMINAL_DEPTH   # exact however deep anyone searches
+        elif depth_remaining == 0:
+            leaf_depth = 0
+        elif has_winner(state, self.current_game_type.k):
+            leaf_depth = TERMINAL_DEPTH
+        else:
+            leaf_depth = None
+        if leaf_depth is not None:
+            val = self.evaluate(state)
+            if key is not None:
+                self.store(key, leaf_depth, val, EXACT, None)
+            return [val, None, None]
+
+        alpha_orig, beta_orig = alpha, beta
         is_max = (state.whose_move == 'X')  # X maximizes, O minimizes
         best_val = float('-inf') if is_max else float('inf')
         best_move = None
         best_state = None
 
         children = successors_and_moves(state)
-        if state is self.search_root and self.preferred_move is not None \
+        first = None
+        if table_move is not None:
+            first = table_move
+            self.zobrist_num_useful_hits_for_ordering += 1
+        elif is_root and self.preferred_move is not None \
                 and self.playing_mode != KAgent.AUTOGRADER:
             # Try the previous depth's best move first for more cutoffs.
-            children = sorted(children, key=lambda c: c[0] != self.preferred_move)
+            first = self.preferred_move
+        if first is not None:
+            children = sorted(children, key=lambda c: c[0] != first)
 
         game_type = self.current_game_type
         for move, successor in children:
@@ -289,6 +371,10 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             if game_type is not None and \
                     winTesterForK(successor, move, game_type.k) != 'No win':
                 successor.finished = True
+            if key is not None:
+                # Incremental hash: add the new token, flip whose turn it is.
+                successor.zobrist_key = key ^ self.zobrist_side_key ^ \
+                    self.zobrist_keys[move[0]][move[1]][state.whose_move]
             result = self.minimax(successor, depth_remaining - 1, pruning, alpha, beta)
             self._check_search_deadline()
             val = result[0]
@@ -310,7 +396,46 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                         break
                     beta = min(beta, best_val)
 
+        if key is not None:
+            # With pruning, a value outside the original window is only a bound.
+            if not pruning or alpha_orig < best_val < beta_orig:
+                flag = EXACT
+            elif best_val <= alpha_orig:
+                flag = UPPER
+            else:
+                flag = LOWER
+            self.store(key, depth_remaining, best_val, flag, best_move)
+
         return [best_val, best_move, best_state]
+
+    # ---- Zobrist hashing ---------------------------------------------------
+
+    # One random 64-bit key per (square, token), plus one for "O to move".
+    # A fixed seed keeps runs reproducible.
+    def init_zobrist(self, rows, columns):
+        rng = random.Random(415)
+        self.zobrist_keys = [[{'X': rng.getrandbits(64), 'O': rng.getrandbits(64)}
+                              for _ in range(columns)] for _ in range(rows)]
+        self.zobrist_side_key = rng.getrandbits(64)
+        self.transposition_table = {}
+
+    # Full hash of a state; minimax updates it incrementally instead.
+    def zobrist_hash(self, state):
+        h = 0
+        for i, row in enumerate(state.board):
+            for j, token in enumerate(row):
+                if token == 'X' or token == 'O':
+                    h ^= self.zobrist_keys[i][j][token]
+        if state.whose_move == 'O':
+            h ^= self.zobrist_side_key
+        return h
+
+    # Write an entry, keeping whichever of the old and new was searched deeper.
+    def store(self, key, depth, value, flag, move):
+        old = self.transposition_table.get(key)
+        if old is None or depth >= old[0]:
+            self.transposition_table[key] = (depth, value, flag, move)
+            self.zobrist_table_num_entries_this_turn += 1
 
     # Uses the special static evaluator when one was given (AUTOGRADER mode),
     # otherwise our own static_eval.  Counts every evaluation.
@@ -503,6 +628,12 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                      f"{s['seconds']:.4f} seconds, excluding dialogue generation. "
                      "These totals include repeated positions and any interrupted iteration. "
                      "Receipts, not vibes.")
+        if s['zobrist_lookups'] > 0:
+            parts.append(f"My Zobrist table took {s['zobrist_lookups']:,} lookups and "
+                         f"{s['zobrist_hits']:,} hits; {s['zobrist_useful_minimax']:,} hits answered "
+                         f"a position outright and {s['zobrist_useful_ordering']:,} told me which "
+                         f"move to try first. I wrote {s['zobrist_entries']:,} entries. "
+                         "I remember positions. You don't even remember your last move.")
         if s['special_evaluator']:
             parts.append("The configured leaf evaluator was the supplied special evaluator, not my own heuristic. "
                          "The grader brought its own calculator. Apparently mine has too much personality.")
@@ -703,6 +834,16 @@ def has_winner(state, k):
                        for step in range(1, k)):
                     return True
     return False
+
+# Use the Zobrist transposition table in DEMO/COMPETITION games.
+ZOBRIST_IN_GAMES = True
+# Clear the table between moves once it grows past this many entries.
+MAX_TABLE_ENTRIES = 1000000
+# Transposition table flags: the stored value is exact, a lower bound
+# (search failed high), or an upper bound (search failed low).
+EXACT, LOWER, UPPER = 0, 1, 2
+# Depth recorded for won/drawn positions, whose value never changes.
+TERMINAL_DEPTH = 10**9
 
 # Fraction of the time limit we allow ourselves to spend searching.
 TIME_SAFETY_FRACTION = 0.8
