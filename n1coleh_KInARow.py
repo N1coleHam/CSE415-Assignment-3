@@ -46,7 +46,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.current_game_type = None
         self.playing_mode = KAgent.DEMO
         self.special_static_eval_fn = None
-        self.deadline = None         # time.time() value at which search must stop
+        self.deadline = None         # perf_counter() value at which search must stop
         self.search_root = None      # root state of the current search
         self.preferred_move = None   # best root move from the previous depth
         self.opponent_nickname = 'you'
@@ -60,6 +60,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.last_reply_category = None
         self.score_history = []      # backed-up score after each of our moves, from our side
         self.last_search = None      # numbers from the last search, for "how did you do that"
+        self.previous_search = None  # search for the move the opponent just saw
 
     def introduce(self):
         if self.twin:
@@ -126,7 +127,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         #      stats['zobrist_table_num_entries_this_turn'] = self.zobrist_table_num_entries_this_turn
         #      stats['zobrist_table_num_hits_this_turn']    = self.zobrist_table_num_hits_this_turn
 
-        start = time.time()
+        start = time.perf_counter()
 
         # Reset per-turn statistics.
         self.alpha_beta_cutoffs_this_turn = 0
@@ -134,15 +135,27 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.special_static_eval_fn = special_static_eval_fn
 
         # Leave a safety margin so we return before the game master's limit.
-        if time_limit is None:
-            self.deadline = None
+        self.deadline = None
+        move_deadline = None
+        if self.playing_mode != KAgent.AUTOGRADER and time_limit is not None:
+            budget = max(0.0, time_limit)
+            self.deadline = start + TIME_SAFETY_FRACTION * budget
+            move_deadline = start + budget
+
+        # Have a legal move ready even if the first search cannot finish.
+        # next() copies just one successor, rather than building all of them.
+        fallback = next(successors_and_moves(current_state), None)
+        if fallback is None:
+            best_move, best_state = None, State(old=current_state)
+            best_state.change_turn()
         else:
-            self.deadline = start + TIME_SAFETY_FRACTION * time_limit
+            best_move, best_state = fallback
 
         # Count blank squares to detect a full board and limit depth.
         num_blanks = count_blanks(current_state)
-        best_move, best_state = None, None
         best_score, depth_reached = None, 0
+        timed_out = False
+        used_fallback = True
         self.search_root = current_state
         self.preferred_move = None
 
@@ -155,33 +168,44 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             # out, keeping the result of the deepest search that finished.
             depths = range(1, num_blanks + 1)
 
-        for depth in depths:
-            try:
+        try:
+            for depth in depths:
+                self._check_search_deadline()
                 result = self.minimax(current_state, depth, pruning=use_alpha_beta)
-            except SearchTimeout:
-                break
-            if result[1] is not None:
-                best_move, best_state = result[1], result[2]
-                best_score, depth_reached = result[0], depth
-                self.preferred_move = best_move  # search it first next depth
+                # The last leaf may itself have taken us past the deadline.
+                self._check_search_deadline()
+                if result[1] is not None:
+                    best_move, best_state = result[1], result[2]
+                    best_score, depth_reached = result[0], depth
+                    used_fallback = False
+                    self.preferred_move = best_move  # search it first next depth
+        except SearchTimeout:
+            # Keep the fallback or the previous fully completed result.
+            timed_out = True
+        finally:
+            # Do not leave an expired deadline or root preference for later calls.
+            self.deadline = None
+            self.search_root = None
+            self.preferred_move = None
 
-        if best_move is None:
-            # Full board, or time ran out before depth 1 finished:
-            # take the first legal move if one exists.
-            successors = list(successors_and_moves(current_state))
-            if successors:
-                best_move, best_state = successors[0]
-            else:
-                best_move, best_state = None, State(old=current_state)
-                best_state.change_turn()
-
+        self.previous_search = self.last_search
         self.last_search = {'depth': depth_reached,
                             'evals': self.num_static_evals_this_turn,
                             'cutoffs': self.alpha_beta_cutoffs_this_turn,
-                            'seconds': time.time() - start,
-                            'score': best_score}
+                            'seconds': time.perf_counter() - start,
+                            'score': best_score,
+                            'move': best_move,
+                            'k': self.current_game_type.k,
+                            'pruning': bool(use_alpha_beta),
+                            'iterative_deepening': self.playing_mode != KAgent.AUTOGRADER,
+                            'special_evaluator': special_static_eval_fn is not None,
+                            'timed_out': timed_out,
+                            'used_fallback': used_fallback}
         if not self.utterances_matter:
             new_remark = 'OK'
+        elif move_deadline is not None and time.perf_counter() >= move_deadline:
+            # Don't start optional dialogue work when the whole budget is gone.
+            new_remark = "No comment. Your move."
         else:
             try:
                 new_remark = self.compose_utterance(current_state, current_remark,
@@ -202,6 +226,10 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             'zobrist_num_useful_hits_for_ordering': -1
         }
         return [[best_move, best_state, stats], new_remark]
+
+    def _check_search_deadline(self):
+        if self.deadline is not None and time.perf_counter() >= self.deadline:
+            raise SearchTimeout()
 
     # The main adversarial search function:
     def minimax(self,
@@ -228,8 +256,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
 
         # Give up on this search if we are out of time; make_move falls back
         # to the result of the last depth that finished.
-        if self.deadline is not None and time.time() > self.deadline:
-            raise SearchTimeout()
+        self._check_search_deadline()
 
         # Base cases: game finished, depth limit reached, or no blank squares remain.
         # Stop at the depth limit or a draw, even without a finished flag.
@@ -263,6 +290,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                     winTesterForK(successor, move, game_type.k) != 'No win':
                 successor.finished = True
             result = self.minimax(successor, depth_remaining - 1, pruning, alpha, beta)
+            self._check_search_deadline()
             val = result[0]
 
             if (is_max and val > best_val) or (not is_max and val < best_val):
@@ -371,7 +399,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Special requests get a real answer (in character, of course).
         lowered = (remark or '').lower()
         if 'how' in lowered and ('did that' in lowered or 'do that' in lowered):
-            return self.style(self.explain_last_move(k))
+            return self.style(self.explain_last_move(k, previous=True))
         if 'take on the game' in lowered or 'game so far' in lowered:
             return self.style(self.game_so_far())
 
@@ -447,18 +475,44 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             line += ' ' + random.choice(TWIN_SUFFIXES)
         return line
 
-    # "Tell me how you did that": report what the last search actually did.
-    def explain_last_move(self, k):
-        s = self.last_search
-        if s['depth'] == 0:
-            return "Honestly? I ran out of time and played the first open square. Still beat you to it."
-        return ("Fine, since you asked nicely. Minimax with alpha-beta and iterative deepening: "
-                "I finished a " + str(s['depth']) + "-ply search, evaluated "
-                + format(s['evals'], ',') + " positions and pruned "
-                + format(s['cutoffs'], ',') + " branches in "
-                + format(s['seconds'], '.2f') + " seconds. "
-                "My static eval scores every line of " + str(k) + " that only one side "
-                "can still complete, ten times more per extra piece. Try it sometime.")
+    # Opponent requests refer to our previous visible move, not the new one.
+    # Direct calls can still explain the most recently selected move.
+    def explain_last_move(self, k, previous=False):
+        s = self.previous_search if previous else self.last_search
+        if s is None:
+            return ("I don't have an earlier move to explain yet. "
+                    "You're requesting a sequel before the pilot. Let me play first.")
+
+        which_move = 'previous move' if previous else 'move I just selected'
+        algorithm = 'minimax with alpha-beta pruning' if s['pruning'] else 'plain minimax (pruning disabled)'
+        search = 'iterative deepening' if s['iterative_deepening'] else 'one fixed-depth search'
+        parts = [f"Ah, you want the director's commentary. Fine. For my {which_move} at {s['move']}: "
+                 f"I used {algorithm} and {search}."]
+        if s['used_fallback']:
+            parts.append("No searched move was accepted; I used the first legal square as a fallback. "
+                         "No, that wasn't a secret master plan. Sometimes a square is just a square.")
+        else:
+            parts.append(f"My deepest completed iteration was {s['depth']} ply, "
+                         f"with a backed-up score of {s['score']} (higher favors X, lower favors O). "
+                         "Thinking ahead. Controversial, I know.")
+        if s['timed_out']:
+            parts.append("The search deadline was reached; unfinished work did not replace my saved move. "
+                         "The clock cut my microphone, not my standards.")
+        parts.append(f"Across this move's search, I made {s['evals']:,} static evaluation calls "
+                     f"and recorded {s['cutoffs']:,} alpha-beta cutoff events in "
+                     f"{s['seconds']:.4f} seconds, excluding dialogue generation. "
+                     "These totals include repeated positions and any interrupted iteration. "
+                     "Receipts, not vibes.")
+        if s['special_evaluator']:
+            parts.append("The configured leaf evaluator was the supplied special evaluator, not my own heuristic. "
+                         "The grader brought its own calculator. Apparently mine has too much personality.")
+        else:
+            parts.append(f"My heuristic scores unblocked length-{s['k']} segments: "
+                         "X adds points, O subtracts them, and each extra token multiplies "
+                         "a nonwinning segment's weight by ten. Completed wins dominate; "
+                         "full-board draws score zero. "
+                         "That's the scoring system. The attitude is complimentary.")
+        return ' '.join(parts)
 
     # "What's your take on the game so far?": narrate our score trend and predict.
     def game_so_far(self):
@@ -588,10 +642,10 @@ LINES = {
         "Was that supposed to be hard?",
     ],
     'stats': [
-        "I checked {evals:,} positions this turn. How many did you check? One?",
-        "{cutoffs:,} branches pruned. Kind of like your chances.",
+        "I made {evals:,} evaluation calls this turn. How many did you make? One?",
+        "{cutoffs:,} alpha-beta cutoffs. Kind of like your chances.",
         "I searched {depth} moves ahead. You should try thinking one.",
-        "That took me {seconds:.2f} seconds. You can have the rest of the day.",
+        "Search took me {seconds:.2f} seconds. You can have the rest of the day.",
     ],
     # Replies to the opponent avoid the words in REMARK_KEYWORDS and '?',
     # so two copies of this agent don't trigger each other forever.
