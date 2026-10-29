@@ -20,6 +20,7 @@ STUDENT_IDS = ['n1coleh', 'yin123'] # The first ID here should
 
 import time # You'll probably need this to avoid losing a
  # game due to exceeding a time limit.
+import random
 
 # Create your own type of agent by subclassing KAgent:
 
@@ -28,11 +29,14 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
 
     def __init__(self, twin=False):
         self.twin=twin
-        self.nickname = 'Nic'
-        if twin: self.nickname += '2'
-        self.long_name = 'Templatus Skeletus'
-        if twin: self.long_name += ' II'
-        self.persona = 'bland'
+        self.nickname = 'Smirk'
+        if twin: self.nickname = 'Smirk Jr.'
+        self.long_name = 'Smirk the Insufferable'
+        if twin: self.long_name = 'Smirk the Passive-Aggressive'
+        # Base agent trash-talks openly; the twin says the same things
+        # wrapped in fake politeness.
+        self.persona = 'smug rage-baiter'
+        if twin: self.persona = 'passive-aggressive rage-baiter'
         self.voice_info = {'Chrome': 10, 'Firefox': 2, 'other': 0}
         self.playing = "don't know yet" # e.g., "X" or "O".
         self.alpha_beta_cutoffs_this_turn = -1
@@ -45,12 +49,28 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.deadline = None         # time.time() value at which search must stop
         self.search_root = None      # root state of the current search
         self.preferred_move = None   # best root move from the previous depth
+        self.opponent_nickname = 'you'
+        self.utterances_matter = True
+        self.reset_dialog()
+
+    # Per-game memory used to make utterances (see compose_utterance).
+    def reset_dialog(self):
+        self.decks = {}              # category -> unused lines, so we don't repeat
+        self.utt_count = 0
+        self.last_reply_category = None
+        self.score_history = []      # backed-up score after each of our moves, from our side
+        self.last_search = None      # numbers from the last search, for "how did you do that"
 
     def introduce(self):
-        intro = '\nMy name is Templatus Skeletus.\n'+\
-            '"An instructor" made me.\n'+\
-            'Somebody please turn me into a real game-playing agent!\n'
-        if self.twin: intro += "By the way, I'm the TWIN.\n"
+        if self.twin:
+            intro = '\nHi! I\'m ' + self.long_name + '.\n' + \
+                'I was made by ' + AUTHORS + ' (' + ', '.join(STUDENT_IDS) + ').\n' + \
+                'I\'m sure you\'ll do your best. It probably won\'t be enough, but still. :)\n'
+        else:
+            intro = '\nMy name is ' + self.long_name + '.\n' + \
+                'I was made by ' + AUTHORS + ' (' + ', '.join(STUDENT_IDS) + ').\n' + \
+                'I have never lost a game. (I have lost several games.)\n' + \
+                'Let\'s make this quick, I have a nap scheduled.\n'
         return intro
 
     # Receive and acknowledge information about the game from
@@ -75,6 +95,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         self.opponent_nickname = opponent_nickname
         self.expected_time_per_move = expected_time_per_move
         self.utterances_matter = utterances_matter
+        self.reset_dialog()
 
         # The autograder checks for this exact string before running any tests.
         # The caller controls playing_mode; preserve its selected mode.
@@ -121,6 +142,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         # Count blank squares to detect a full board and limit depth.
         num_blanks = count_blanks(current_state)
         best_move, best_state = None, None
+        best_score, depth_reached = None, 0
         self.search_root = current_state
         self.preferred_move = None
 
@@ -140,6 +162,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 break
             if result[1] is not None:
                 best_move, best_state = result[1], result[2]
+                best_score, depth_reached = result[0], depth
                 self.preferred_move = best_move  # search it first next depth
 
         if best_move is None:
@@ -152,7 +175,20 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
                 best_move, best_state = None, State(old=current_state)
                 best_state.change_turn()
 
-        new_remark = "I'll play at " + str(best_move) + "."
+        self.last_search = {'depth': depth_reached,
+                            'evals': self.num_static_evals_this_turn,
+                            'cutoffs': self.alpha_beta_cutoffs_this_turn,
+                            'seconds': time.time() - start,
+                            'score': best_score}
+        if not self.utterances_matter:
+            new_remark = 'OK'
+        else:
+            try:
+                new_remark = self.compose_utterance(current_state, current_remark,
+                                                    best_move, best_state, best_score)
+            except Exception:
+                # Never forfeit a game over a remark.
+                new_remark = "No comment. Your move."
 
         if self.playing_mode != KAgent.AUTOGRADER:
             return [[best_move, best_state], new_remark]
@@ -314,6 +350,287 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             return 0
         return score
  
+    # ---- Dialog ----------------------------------------------------------
+
+    # Build this turn's remark from the board, the search result, and the
+    # opponent's last remark.  Rule-based: the most notable situation picks
+    # a category of lines, then we may add a reply to the opponent or a
+    # brag that uses the real search numbers.
+    def compose_utterance(self, state, remark, move, new_state, score):
+        me = state.whose_move
+        opp = other(me)
+        game_type = self.current_game_type
+        k = game_type.k if game_type is not None else None
+        self.utt_count += 1
+
+        my_score = None
+        if score is not None:
+            my_score = score if me == 'X' else -score  # positive = good for us
+            self.score_history.append(my_score)
+
+        # Special requests get a real answer (in character, of course).
+        lowered = (remark or '').lower()
+        if 'how' in lowered and ('did that' in lowered or 'do that' in lowered):
+            return self.style(self.explain_last_move(k))
+        if 'take on the game' in lowered or 'game so far' in lowered:
+            return self.style(self.game_so_far())
+
+        # Most notable situation first.
+        if k is None or move is None:
+            category = 'even'
+        elif winTesterForK(new_state, move, k) != 'No win':
+            category = 'i_won'
+        elif my_score is not None and my_score >= win_score_for(state, k):
+            category = 'forced_win'
+        elif my_score is not None and my_score <= -win_score_for(state, k):
+            category = 'forced_loss'
+        elif blocks_win(state, move, opp, k):
+            category = 'blocked'
+        elif winning_squares(new_state, me, k):
+            category = 'threat'
+        elif self.utt_count == 1:
+            category = 'opening'
+        elif my_score is not None and my_score > 2 * 10**(k - 3):
+            category = 'ahead'
+        elif my_score is not None and my_score < -2 * 10**(k - 3):
+            category = 'behind'
+        else:
+            category = 'even'
+
+        fields = {'opp': self.opponent_nickname, 'k': k}
+        fields.update(self.last_search)
+        line = self.pick(category, fields)
+
+        reply = self.respond_to(remark, fields)
+        if reply:
+            line = reply + ' ' + line
+        elif self.utt_count % 3 == 0 and self.last_search['evals'] > 0:
+            line += ' ' + self.pick('stats', fields)
+        return self.style(line)
+
+    # Take the next unused line from a category, reshuffling when it runs out.
+    def pick(self, category, fields):
+        deck = self.decks.get(category)
+        if not deck:
+            deck = LINES[category][:]
+            random.shuffle(deck)
+            self.decks[category] = deck
+        return deck.pop().format(**fields)
+
+    # React to keywords in the opponent's remark, or sometimes quote it back.
+    def respond_to(self, remark, fields):
+        remark = (remark or '').strip()
+        if not remark or remark in GAME_MASTER_REMARKS:
+            return None
+        lowered = remark.lower()
+        category = None
+        for keywords, keyword_category in REMARK_KEYWORDS:
+            if any(word in lowered for word in keywords):
+                category = keyword_category
+                break
+        if category is None and self.utt_count % 2 == 0:
+            category = 'question' if '?' in remark else 'quote_back'
+        # Don't answer the same way twice in a row (keeps self-play from
+        # getting stuck trading the same comeback).
+        if category is None or category == self.last_reply_category:
+            self.last_reply_category = None
+            return None
+        self.last_reply_category = category
+        if category == 'quote_back':
+            snippet = ' '.join(remark.split()[:6]).rstrip('.!?,')
+            return '"' + snippet + '"? ' + self.pick('quote_back', fields)
+        return self.pick(category, fields)
+
+    # The twin says everything with fake politeness tacked on.
+    def style(self, line):
+        if self.twin:
+            line += ' ' + random.choice(TWIN_SUFFIXES)
+        return line
+
+    # "Tell me how you did that": report what the last search actually did.
+    def explain_last_move(self, k):
+        s = self.last_search
+        if s['depth'] == 0:
+            return "Honestly? I ran out of time and played the first open square. Still beat you to it."
+        return ("Fine, since you asked nicely. Minimax with alpha-beta and iterative deepening: "
+                "I finished a " + str(s['depth']) + "-ply search, evaluated "
+                + format(s['evals'], ',') + " positions and pruned "
+                + format(s['cutoffs'], ',') + " branches in "
+                + format(s['seconds'], '.2f') + " seconds. "
+                "My static eval scores every line of " + str(k) + " that only one side "
+                "can still complete, ten times more per extra piece. Try it sometime.")
+
+    # "What's your take on the game so far?": narrate our score trend and predict.
+    def game_so_far(self):
+        history = self.score_history
+        if not history:
+            return "We haven't even started and I'm already ahead."
+        first, current = history[0], history[-1]
+        if current > first:
+            trend = ", so I've only gotten better while you've gotten worse"
+        elif current < first:
+            trend = ". You've made it closer than it should be, I'll give you that"
+        else:
+            trend = ". Perfectly balanced, as all things should be"
+        if current > 0:
+            winner = "me. Obviously."
+        elif current < 0:
+            winner = "you, technically, but only because of luck."
+        else:
+            winner = "me, because it's tied and I'm better."
+        return ("My take? " + str(len(history)) + " moves in, my evaluation went from "
+                + str(first) + " to " + str(current) + trend + ". Prediction: " + winner)
+
+def other(p):
+    return 'O' if p == 'X' else 'X'
+
+# Same win score as static_eval uses, so we can tell a forced win
+# from an ordinary good position.
+def win_score_for(state, k):
+    return 4 * len(state.board) * len(state.board[0]) * 10**k + 1
+
+# True if the opponent would have won by playing where we just played.
+def blocks_win(state, move, opp, k):
+    test = State(old=state)
+    test.board[move[0]][move[1]] = opp
+    return winTesterForK(test, move, k) != 'No win'
+
+# Squares where `who` could win immediately on this board.
+def winning_squares(state, who, k):
+    test = State(old=state)
+    squares = []
+    for i, row in enumerate(test.board):
+        for j, token in enumerate(row):
+            if token != ' ': continue
+            row[j] = who
+            if winTesterForK(test, (i, j), k) != 'No win':
+                squares.append((i, j))
+            row[j] = ' '
+    return squares
+
+# Remarks that come from a game master or autograder, not the opponent.
+GAME_MASTER_REMARKS = {"The game is starting.", "Let's play!", "Go.", "Do your thing."}
+
+# (keywords in the opponent's remark, category of reply), checked in order.
+REMARK_KEYWORDS = [
+    (('luck',), 'luck'),
+    (('good move', 'nice', 'well played', 'impressive'), 'compliment'),
+    (('sorry',), 'sorry'),
+    (('lose', 'losing', 'lost'), 'lose_talk'),
+    (('win', 'winning'), 'win_talk'),
+    (('random', 'dice', 'flip', 'spin'), 'random'),
+]
+
+TWIN_SUFFIXES = ["No offense!", "Just saying. :)", "But you're doing great, really.",
+                 "Respectfully.", "Not trying to be mean or anything.",
+                 "I say this with love."]
+
+# Lines may use {opp}, {k}, {depth}, {evals}, {cutoffs}, {seconds}.
+LINES = {
+    'opening': [
+        "Let's get this over with, {opp}.",
+        "First move and I'm already winning. Statistically. Probably.",
+        "I'll go easy on you. Just kidding.",
+        "Ready when you are. Well, I was ready ages ago.",
+    ],
+    'ahead': [
+        "Is this your first time playing? It's okay, you can tell me.",
+        "I'm not saying you're losing, but the scoreboard is.",
+        "Wow. Bold strategy. Let's see how that works out for you.",
+        "Imagine being {opp} right now. Couldn't be me.",
+        "You're doing great! (I'm lying.)",
+        "Don't worry, losing builds character.",
+        "This is getting a little embarrassing for you.",
+    ],
+    'even': [
+        "Interesting move. Wrong, but interesting.",
+        "Take your time. I already know how this ends.",
+        "Mid.",
+        "I've seen better moves from a random number generator.",
+        "Okay, I'll admit that was fine. Barely.",
+        "Are you trying, or is this a warm-up?",
+        "Cute.",
+    ],
+    'behind': [
+        "I'm letting you think you're winning. It's called strategy.",
+        "Lucky. Very, very lucky.",
+        "This board is clearly rigged.",
+        "I'm not mad. I'm just playing at twenty percent.",
+        "Enjoy it while it lasts.",
+        "Whatever. I wasn't even trying that turn.",
+    ],
+    'blocked': [
+        "Nice try. Did you really think I wouldn't see that?",
+        "Blocked. Write that down.",
+        "Denied. Next.",
+        "Oh, were you going somewhere with that?",
+        "That was your big plan? Adorable.",
+    ],
+    'threat': [
+        "You see it, right? ...Right?",
+        "I'd block that if I were you. But I'm not, so I won't tell you where.",
+        "{opp}, tick tock.",
+        "Go ahead, find it. I'll wait.",
+    ],
+    'forced_win': [
+        "It's over. I've seen the future and you're not in it.",
+        "I already won, you just haven't noticed yet.",
+        "You can resign now. I won't tell anyone. (I'll tell everyone.)",
+    ],
+    'forced_loss': [
+        "I'm losing this on purpose. For content.",
+        "Fine. Take it. I didn't want it anyway.",
+        "The lag is unbelievable today.",
+    ],
+    'i_won': [
+        "GG. Go next.",
+        "And that's {k} in a row. Were you even watching?",
+        "Was that supposed to be hard?",
+    ],
+    'stats': [
+        "I checked {evals:,} positions this turn. How many did you check? One?",
+        "{cutoffs:,} branches pruned. Kind of like your chances.",
+        "I searched {depth} moves ahead. You should try thinking one.",
+        "That took me {seconds:.2f} seconds. You can have the rest of the day.",
+    ],
+    # Replies to the opponent avoid the words in REMARK_KEYWORDS and '?',
+    # so two copies of this agent don't trigger each other forever.
+    'luck': [
+        "It's called skill. Look it up.",
+        "That was math, not fortune.",
+    ],
+    'compliment': [
+        "I know. Thanks for noticing.",
+        "Flattery won't save you, but keep going.",
+    ],
+    'sorry': [
+        "Apology accepted. Still beating you.",
+        "Don't apologize, just play better.",
+    ],
+    'lose_talk': [
+        "Finally, something we agree on.",
+        "Correct. And it isn't me.",
+    ],
+    'win_talk': [
+        "Big talk. Small results.",
+        "Bold claim. Zero evidence.",
+    ],
+    'random': [
+        "That explains a lot, actually.",
+        "Coin tosses aren't a strategy, but you do you.",
+    ],
+    'question': [
+        "Asking me questions mid-game. Focus.",
+        "I'd answer, but you wouldn't understand.",
+    ],
+    'quote_back': [
+        "Wow. Really cooked with that one.",
+        "Did you think of that all by yourself?",
+        "Groundbreaking.",
+        "I'm framing that one.",
+    ],
+}
+
 def has_winner(state, k):
     """Detect a winning line without changing the state or evaluating it."""
     board = state.board
