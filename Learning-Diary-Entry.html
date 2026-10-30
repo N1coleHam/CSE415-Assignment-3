@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Learning Diary Entry Template — K-in-a-Row Assignment</title>
+<style>
+/* Keep the original template layout; wrap long pasted text for printing. */
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+pre.board { white-space: pre; overflow-wrap: normal; }
+img { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<main>
+<center>
+<table cellpadding="7" width="700">
+
+  <tr><td><font size="+3" face="Helvetica">
+    Learning Diary Entry
+  </font></td></tr>
+
+  <tr><td><font size="+1" face="Helvetica">
+    Introduction to Artificial Intelligence
+  </font></td></tr>
+
+  <tr><td><hr></td></tr>
+
+  <tr><td><font face="Helvetica">
+    <p>
+      <b>Purpose:</b>
+      This document serves as both your <em>Learning Diary entry</em> and your
+      <em>written report</em> for the K-in-a-Row assignment.  Submit it as
+      <code>Learning-Diary-Entry.pdf</code> (print this page from your browser,
+      or export from Word/Google Docs) alongside your code.
+    </p>
+    <p>
+      Copy this template into your own file.  After each heading and its
+      instruction paragraph, write your response in a visually distinct way
+      (different font, color, or indentation).  Aim for honest, specific answers
+      rather than length.  Where a question asks you to trace through code or
+      show a calculation, actually do so — do not describe it in the abstract.
+    </p>
+    <p>
+      <b>Point values</b> (60 pts total for this document):
+      Secs 1+2: 3 &bull; Sec 3: 3 &bull; Sec 4: 14 &bull; Sec 5: 10 &bull;
+      Sec 6: 10 &bull; Sec 7: 4 &bull; Sec 8: 1 &bull; Sec 9: 4 &bull;
+      Sec 10: 1 &bull; Transcript (items 4.10–4.11): 10.
+      Suggested sub-weights appear in each section heading.
+    </p>
+    <p>
+      <b>Note on gen-AI use:</b>
+      This assignment permits gen-AI assistance.  The questions in Sections 4
+      and 5 are designed to require engagement with <em>your specific
+      submitted code and your specific game runs</em>.  They cannot be
+      answered by prompting an AI with the assignment description alone.
+    </p>
+  </font></td></tr>
+
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Basic Information</b>
+<pre>
+Student name(s): Ham, Nicole; Rena Yin
+Student ID(s): 2301417; 2339469
+Agent name:
+Game-type focus: Five-in-a-Row with forbidden corners
+Submission date: 10/29/2026
+</pre>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 1 &mdash; Goals</b> <i>(3 pts, with Section 2)</i>
+<pre>
+Describe what you set out to build at the start of the assignment.
+What were your intentions for the agent's persona — its name, tone,
+character? What level of search capability (minimax depth, alpha-beta,
+optional extras) did you aim for? If you worked with a partner, briefly
+note how you divided the work.
+  </pre>
+<div style="color: blue;">
+<p>For agent persona, we aim for a ‘RageBaiting’ type just to irritate the opponents. For searching capability, we built minimax with alpha-beta pruning, plus a time limit with iterative deepening, and Zobrist hashing for extra credit. We didn’t choose to bring in an LLM in the current stage, maybe it could be possible in the future. Currently we are doing search stats for the dialogue. Work split:</p>
+<p>Rena - minimax, introduce, make_move, persona tune and dialogue, zobrist hashing.</p>
+<p>Nicole - static_eval, prepare, timing improvement, implemented features for “Tell me how you did that” and “What&#x27;s your take on the game so far?”, searched for LLM plugin related stuff.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 2 &mdash; Agent Profile</b> <i>(3 pts, with Section 1)</i>
+<pre>
+2a. Agent identity
+    Give the agent's name and a 2–3 line description of its persona:
+    tone, character, and any thematic inspiration (fictional character,
+    historical figure, invented archetype, etc.).
+</pre>
+<div style="color: blue;">
+<p>Our agent is Smirk the Insufferable, who is an overconfident player that provides sarcastic commentary as it plays the game. The tone for this character is smug and purposefully tries to make comments that would bait the player into raging and responding back. It also exaggerates its confidence by joking about its search process and commenting at the board.</p>
+</div>
+<pre>
+2b. Twin
+    How does the twin instance (OurAgent(twin=True)) differ from the
+    base agent? Describe at least one behavioral or persona difference,
+    and explain why you chose that particular variation.  (The twin's
+    purpose is to enable self-play tests where both sides do not make
+    identical moves; even a small difference in opening preference or
+    persona name achieves this.)
+</pre>
+<div style="color: blue;">
+<p>Our twin is called Smirk the Passive-Aggressive, who goes by the nickname Smirk Jr. This twin adds extra fake politeness phrases like “No offense!” and “But you’re doing great, really” and has a different introduction. For the twin agent, the search ability is identical and dialogues are picked randomly.</p>
+</div>
+<pre>
+2c. Game-type coverage
+    Which game type(s) did you test your agent against most thoroughly,
+    and which did you test least?  Any known weaknesses on a particular
+    board size or k value?
+  </pre>
+<div style="color: blue;">
+<p>We tested on all 3 games: five in a row, cassini, and tic-tac-toc. We test most thoroughly on Five in a row, since that’s the most transcript game. We ran fully games against RandomPlayer and against our own twin player at time limits 0.05 to 3 seconds per move, and used it for our zobrist hashing benchmarks. Cassini got basically the same as above. For Tic-tac-toe we mainly tested through the autograder. The main know weakness is depth on the larger boards. At 0.5 to 1 second per move, the agent only reaches about 3 ply in a Five in a row game. Which should be enough for blocking immediate threats, but not to plan multi-move attacks.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 3 &mdash; Development &amp; Activities</b> <i>(3 pts)</i>
+<pre>
+Describe the phases of your work on this assignment, in roughly
+chronological order.  Key areas to address:
+
+  - How did you approach writing the move generator and the minimax
+    skeleton before adding alpha-beta?
+  - What order did you tackle the main components in, and why?
+  - How did you develop the agent's dialog capability?  If you went
+    through an iterative design process (e.g., scripted rules first,
+    then LLM integration), describe each phase and what you learned
+    from it.  What worked?  What did you discard?
+  - What resources (lecture notes, readings, outside references)
+    were most useful?
+  </pre>
+<div style="color: blue;">
+<p>I wrote the move generator and minimax skeleton first, which follows the numbered steps shown as pseudocode. The generator ‘successors_and_moves’ yields each move with a deep-copied successor rate. Minimax recurs with X maximizing and O minimizing. Once plain minimax passed the count test, I added the alpha-beta cutoff checks, that passed the second count test.</p>
+<p>The order that we tackled the main components is that we first established the move generator and the minimax search framework. We then reviewed the state representation successor generation, and the search data flow. After that, we implemented prepare to save the game configuration and developed static_eval so the search can distinguish good moves. We then refined time management through iterative deepening, fallbacks, and deadline checks so that it can preserve the last completed search result. After we verified that the base was done, we then expanded to other extra credit opportunities like implementing a feature where the agent responds to “Tell me how you did that”, “What&#x27;s your take on the game so far?”, and Zobrist hashing.</p>
+<p>As for the dialog development, Rena first established Smirk’s persona and rule-based dialogue based on opponent keywords and the state of the board. AI assistance was used to help make the computation explanations accurate and explains the move of what it saw, and also refined the wording to preserve the persona without inventing statistics or outcomes. We considered integrating Gemini, but decided against it because we wanted to avoid the credential and dependency concerns.</p>
+<p>The assignment specification and the starter files were useful for references for how we should implement interfaces, modes, and present our deliverables. The lecture Adversarial Search I and Adversarial Search II helped how we implement the weighted unblocked line approach, alpha-beta bounds, and cutoff conditions. AI was also used to explain certain aspects that were confusing and walked through the code on parts that we didn’t understand.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 4 &mdash; Search Algorithm Analysis</b> <i>(14 pts: ~3 implementation, ~3 measurement, ~4 correctness explanation, ~4 hand-trace)</i>
+<pre>
+This section asks you to explain and demonstrate your understanding of
+the search algorithms you implemented.  Answers must refer to your
+specific code and your specific test results — generic descriptions
+of how minimax works in textbooks are not sufficient.
+</pre>
+<pre>
+4a. Implementation overview
+    In which function(s) do alpha-beta cutoffs get detected in your
+    code?  Briefly describe the data flow: how does a cutoff in a
+    deep recursive call propagate back to stop exploration of siblings?
+</pre>
+<div style="color: blue;">
+<p>Cutoffs are detected inside the minimax method, right after each child’s value is backed up. At a max node (X to move), the search stops when best_val &gt;= beta. At a min node (O), it stops when best_val &lt;= alpha. Otherwise, the node narrows its own window, alpha = max(alpha, best_value) at a max node or beta = min(beta, best_value) at a min node. On a cutoff, the loop over children breaks. Our generator builds children very lazy, so the remaining siblings are never even created. Alpha and Beta are passed down as arguments to each recursive call, so every node searches inside the window inherited from its ancestors. When a deep node cuts off, it returns early with a value outside its parent window. The parent then compares them with the bound, and may cut it off in turn.</p>
+</div>
+<pre>
+4b. Effectiveness measurement
+    Run your agent on at least one game (or on the autograder test
+    state) with alpha-beta ON vs. OFF, at the same search depth
+    (depth 3 or more).  Report the number of static evaluations in
+    each case.  How many evaluations does alpha-beta save, and what
+    is the percentage reduction?
+</pre>
+<div style="color: blue;">
+<p>We compared our agent with alpha-beta pruning enabled and disabled on autograder.MM_TEST_STATE, with O to move. Zobrist hashing was disabled and no time limit was applied. In our code, <code>minimax</code> calls <code>evaluate</code> at the leaves. <code>evaluate</code> increments <code>num_static_evals_this_turn</code>, which we used to measure the number of evaluation calls. When alpha-beta pruning was false, the search had 21 evaluations. When it was true, it had 12 evaluations and had six cutoff events. So, when alpha beta is on, we save on 9 evaluations (21-12). Therefore, the percentage reduction relative to the plain minimax is (21-12) / 21 * 100 = 42.86%. Our pruning checks are located inside the minimax, where an X/MAX node stops examining the children when <code>best_val &lt;= alpha</code>. These checks reduce the number of leaves reaching evaluate. Both still returned the same result of (1, 2) and a backed up value of 0, which shows that pruning still leads to the same result. An additional note is that the unpruned count is 21 instead of 24 because we established an extra check that would stop when a state reaches a winning position rather than reaching the entire depth limit.</p>
+</div>
+<pre>
+4c. Conceptual question — correctness of pruning
+    Explain in your own words why alpha-beta pruning is *correct*:
+    that is, why can we safely prune a subtree without risking that
+    we miss the optimal move?  Your answer should be specific enough
+    that it could not have been written without understanding the
+    algorithm — for example, identify what invariant about alpha and
+    beta values makes the cutoff safe.
+</pre>
+<div style="color: blue;">
+<p>Alpha is the value the maximizer is already guaranteed by some alternative higher up on the current path. Beta is the same guarantee for the minimizer. Together they hold an invariant: any node whose value falls outside the window alpha beta cannot be reached by optimal play, because one of the two players already has a better option elsewhere and would never choose the path leading to it.</p>
+</div>
+<pre>
+4d. Minimax trace (do this by hand)
+    Using the autograder test state (reproduced below for convenience),
+    draw or describe the complete minimax tree to depth 2.  Label each
+    leaf with the value your static_eval (or the special evaluator)
+    assigns.  Show how the backed-up values propagate to the root,
+    and identify the move your agent selects.
+
+    Test state (it is O's turn):
+        O | O | X
+        X |   |
+          |   | X
+    Blank squares in row-major order: (1,1), (1,2), (2,0), (2,1).
+    Expected best move: (1,2).  Plain-minimax leaf count: 12.
+  </pre>
+<div style="color: blue;">
+<p><img src="4d.jpeg" alt="Hand-drawn minimax trace (4d.jpeg)"></p>
+<p>In the image, we traced the tree to a depth of 2. For O turn, we pick the minimizing value from (91, 19, 109, 101); for X turn, we pick the maximizing value from (91, 10, 20, 11, 19, 11, 20, 109, 11, 30, 101, 11).</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 5 &mdash; Static Evaluation Analysis</b> <i>(10 pts: ~4 feature design, ~4 concrete example, ~2 limitations)</i>
+<pre>
+5a. Feature design
+    What features does your static_eval function use to score a board?
+    (Examples: counts of X's and O's in rows/columns/diagonals,
+    weighted partial lines, winning-threat detection, forbidden-square
+    awareness.)  Explain the intuition behind the scoring formula.
+</pre>
+<div style="color: blue;">
+<p>Our <code>static_eval</code> examines every length-k segment horizontally, vertically, and diagonally and  ignores segments containing forbidden squares or both players’ tokens.</p>
+<p>For each eligible segment, our code counts its X and O tokens using <code>segment.count(&#x27;X&#x27;)</code> and <code>segment.count(&#x27;O&#x27;)</code>. If it only contains Xs and blanks, we add <code>10**(x_count - 1)</code> to the score. If it contains Os and blanks, we subtract <code>10**(o_count - 1)</code>. One token contributes +-1, two contributes +-10, and three contributes +-100, which prioritizes lines that are about to be completed since it represents a winning opportunity. This encourages the search to value threats or wins over lines that don’t have a potential winning opportunity. We also want to subtract O’s opportunities because the agent needs to prevent the opponent from winning as well.</p>
+<p>If <code>x_count == k</code>, the function returns win_score, and if <code>o_count == k, it returns -win_score. We calculate the win_score as </code>4 * rows * columns * 10**k + 1<code> so a win is guaranteed to outweigh the partial line scores. After checking all the segments, the function returns 0 if the </code>count_blanks(state) ==  0`, otherwise it will return the accumulated score.</p>
+</div>
+<pre>
+5b. Concrete example
+    Identify a specific board state that your agent actually encountered
+    during a test game (not a constructed example — use a state from a
+    real run).  Write out or sketch the board, state whose turn it is,
+    and report the numerical score your static_eval returned for it.
+    Then justify that score: why is it the right value for that
+    position given your scoring logic?
+</pre>
+<div style="color: blue;">
+<p>A specific board state that my agent actually encountered is Smirk’s eleventh game move, where Smirk places X at (2, 1) in a game match against Michael. This was the following board:</p>
+<pre class="board" aria-label="Recorded game board">    0 1 2 3 4 5 6
+  +---------------+
+0 | - . . . . . - |
+1 | . . . O O . . |
+2 | . X X X X O . |
+3 | . . X X O . . |
+4 | . . . O . . . |
+5 | . . . . . . . |
+6 | - . . . . . - |
+  +---------------+</pre>
+<p><code>.</code> represents an empty square and - represents a forbidden square. Evaluating the position with our evaluation returns 817:</p>
+<table class="score-table">
+  <thead>
+    <tr>
+      <th>Segment contents</th>
+      <th># segments</th>
+      <th>Contribution</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>One X, blanks</td>
+      <td>3</td>
+      <td>+1</td>
+      <td>+3</td>
+    </tr>
+    <tr>
+      <td>Two Xs, blanks</td>
+      <td>5</td>
+      <td>+10</td>
+      <td>+50</td>
+    </tr>
+    <tr>
+      <td>Four Xs, blanks</td>
+      <td>1</td>
+      <td>+1,000</td>
+      <td>+1,000</td>
+    </tr>
+    <tr>
+      <td>One O, blanks</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>-6</td>
+    </tr>
+    <tr>
+      <td>Two Os, blanks</td>
+      <td>3</td>
+      <td>-10</td>
+      <td>-30</td>
+    </tr>
+    <tr>
+      <td>Three Os, blanks</td>
+      <td>2</td>
+      <td>-100</td>
+      <td>-200</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="3" scope="row">Total score</th>
+      <td><strong>817</strong></td>
+    </tr>
+  </tfoot>
+</table>
+<p>Therefore score = 3 + 50 + 1000 - 6 - 30 - 200 = 817 The largest contribution comes from row 2, where the row consists of <code>. X X X X</code> because X can complete five in a row at (2,0). The segments containing both X’s and O’s contributes nothing because it’s being blocked and therefore there’s no possible win. So, the high score represents a strong opportunity for X rather than a value that represents a guaranteed victory or draw. This is represented when O is placed at (2,0) to block X.</p>
+</div>
+<pre>
+5c. Limitations
+    Describe at least one type of board position where your static_eval
+    is likely to give a misleading score, and explain why.
+  </pre>
+<div style="color: blue;">
+<p>Using the board above, this board position is also an example of when static_eval is likely to give a misleading score. Our evaluator returns a deceivingly high number for the row <code>. X X X X</code> since it sees that the X’s pieces align four in a row which brings it closer to a win. The issue is that O moves next and easily occupies the square which blocks the win. The contribution of that row would then be <code>O X X X X</code> which drops the score to 0. This kind of evaluation shows that the formula only counts unblocked lanes without considering who’s next.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 6 &mdash; Dialog &amp; Persona Design</b> <i>(10 pts: ~3 game-state relevance, ~3 opponent responsiveness, ~2 persona consistency, ~2 approach/tools)</i>
+<pre>
+6a. Game-state relevance
+    What features, if any, does your agent use to make its utterances
+    relevant to the current board position or game trajectory?
+    (Examples: commenting on the number of pieces on the board,
+    recognizing a near-win situation, noting the opponent's last move.)
+    Explain how these features work at the code level.
+</pre>
+<div style="color: blue;">
+<p>Our <code>compose_utterance</code> method picks a dialogue category according to the current situation and state of the board. It checks whether the selected move wins using <code>winTesterFork</code>, and then checks whether the backed-up score indicates a win or a loss. <code>blocks_win</code> sees if the opponent could have won with the square, while <code>winning_squares</code> identifies winning opportunities remaining after the move. If none of the situation applies, it chooses an opening remark on the first turn or an ahead/behind remark based on the search score. The selected category is passed to <code>pick</code>, which retrieves a line from a phrase bank that’s shuffled. Every third dialogue, the agent may also add measured search statistics.</p>
+</div>
+<pre>
+6b. Opponent responsiveness
+    What features, if any, does your agent use to respond to or
+    acknowledge the opponent's remarks?  Explain how they work.
+</pre>
+<div style="color: blue;">
+<p>The agent’s respond_to method checks the opponent’s remark by converting the response to lower case and comparing it to a bank of keywords. It contains 15 keywords grouped into 6 categories (luck, compliments, apologies, winning, losing, and randomness). It selects a response category, and <code>pick</code> retrieves an associated comeback. If there’s no match, the agent sometimes responds to a question or quotes from the opponent and adds onto it with a sarcastic reply. The agent also responds to “Tell me how you did that” and “What’s your take on the game so far?” to which it would actually narrate to those questions.</p>
+</div>
+<pre>
+6c. Persona consistency
+    Give two or three example utterances that your agent might produce,
+    and explain what makes them "in character" for the persona you
+    designed.
+</pre>
+<div style="color: blue;">
+<p>Smirk is a character that wants to take credit for beating the opponent, so it replies with something like &quot;Nice try. Did you really think I wouldn&#x27;t see that?&quot;, &quot;Blocked. Write that down.&quot;, and &quot;Denied. Next.&quot; From a real game against RandomPlayer, Randy would say &quot;I hope this is my lucky day!&quot; and to that Smirk answered &quot;That was math, not fortune. I&#x27;m not saying you&#x27;re losing, but the scoreboard is.&quot; This kind of dialogue exaggerates Smirk’s confident and competitive personality.</p>
+</div>
+<pre>
+6d. Approach and tools
+    Describe the method you used to generate utterances: hand-coded
+    rules, an LLM API, search-instrumented commentary, or a
+    combination.  If you used an LLM, briefly describe your prompting
+    strategy and what persona/tone instructions you gave it.
+  </pre>
+<div style="color: blue;">
+<p>We hand-coded the rules for the agent to generate the utterances. The conditional checks are there to select the categories based on events, search scores, and remarks. We considered using an LLM API, but decided against it to avoid the headache with API keys and network issues. In the competition mode where utterances_matter is set to false,  it will return ‘OK’.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 7 &mdash; Challenges &amp; Solutions</b> <i>(4 pts)</i>
+<pre>
+Describe points of difficulty you encountered and how you resolved
+them (or where you remain stuck).  Include at least one concrete
+example of a bug: what the symptom was, what the root cause turned
+out to be, and what the fix was.  Examples of issues students
+commonly hit on this assignment:
+
+  - Off-by-one errors in depth-remaining logic
+  - Returning the original state instead of a deep copy
+  - Alpha-beta cutoff conditions inverted (pruning too aggressively
+    or not at all)
+  - static_eval returning 0 for all states in a particular game type
+  - prepare not returning 'OK', causing autograder failures
+  </pre>
+<div style="color: blue;">
+<p>One difficulty that occurred was the dialog feedback loop. In the self-play, both agents both said &quot;Losing? Finally, something we agree on&quot; for about 40 moves stright. The reply lines that contained the keyword “losing” would trigger a constant cycle and would influence the other agent to say the phrase again as well. We fixed it by setting reply lines to no longer contain trigger words or “?”, and the same reply can’t be used twice in a row.</p>
+<p>Another challenge was making the computation explanations accurate. When testing the agent, it described the search as “minimax with alpha-beta and iterative deepening” even when pruning was disabled or the AUTOGRADER mode only performed one fixed depth search. The cause was that the text was hardcoded, so to fix this we recorded the actual search and selecting the keywords from those settings (including the depth, evaluation calls, cutoff events, elapsed time) and displaying that.</p>
+<p>We also encountered a bug where after the timed search ended for minimax, a later call to the function would immediately raise <code>SearchTimeout</code>. The previous deadline was still stored on the agent, so calling minimax again would inherit the expired time limit which is why it would raise the error. We added a <code>finally</code> block so it would clear the deadline state when a search is completed, timed out, or hit an exception.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 8 &mdash; Reflections &amp; Learnings</b> <i>(1 pt)</i>
+<pre>
+Articulate what you now understand more clearly as a result of doing
+this assignment.  Some prompts to consider:
+
+  - Did implementing minimax change how you think about game-tree
+    search?  Is there anything that surprised you about how it behaves?
+  - What is one connection you made between the material in this
+    assignment and something else from the course or from outside it?
+  - If you were to explain alpha-beta pruning to a classmate who
+    had not yet implemented it, what is the single most important
+    thing you would tell them?
+  </pre>
+<div style="color: blue;">
+<p>Implementing minimax is a good practice and also make me get more familiar with this type of ‘zero sum game’ algorithm. With some pro algorithms built on top of this, such as alpha beta pruning, it really does save a lot of time for game play. In 4b, when we are drawing out the tree, we get further practice on enumerating all possible states and pick up the most optimal choice for each possible step. If we are explaining alpha-beta pruning to someone new, we will tell them to pay attention to the bounds since you need to realize the min and max in every deepening level.</p>
+<p>I also developed a clearer understanding between evaluating a position and searching for a move, where <code>static_eval</code> estimates how good a board is. Another lesson was that I learned was considering tradeoffs in what needed to be saved with a limited time. The agent is able to keep a complete result while it attempts to search deeper so that the agent can still return a legal move on time.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 9 &mdash; Gen-AI Use &amp; Attribution</b> <i>(4 pts)</i>
+<pre>
+9a. Tools used
+    List the AI tools you used on this assignment (e.g., Claude Code,
+    ChatGPT, GitHub Copilot, Gemini).  If you used none, say so.
+</pre>
+<div style="color: blue;">
+<p>Claude Opus 5.5., ChatGPT 6.1-Sol</p>
+</div>
+<pre>
+    
+
+9b. Authorship map
+    For each major component below, indicate whether it was
+    (A) written entirely by you, (B) substantially AI-generated
+    and then reviewed/edited by you, or (C) AI-generated and
+    used largely as produced.  Add a brief note if the reality
+    is more nuanced than A/B/C.
+
+      - Move generator
+      - minimax skeleton (recursion structure, base cases) 
+      - Alpha-beta cutoff logic 
+      - static_eval function body
+      - Utterance generation
+      - prepare / introduce methods
+      - Any extra-credit components
+</pre>
+<div style="color: blue;">
+<table><thead><tr><th>Component</th><th>Category</th><th>Notes</th></tr></thead><tbody>
+<tr><th scope="row">Move generator</th><td>B</td><td></td></tr>
+<tr><th scope="row">minimax skeleton (recursion structure, base cases)</th><td>B</td><td>I followed the implementation instructions and did a rough code skeleton myself, then debugged with AI to see if it contained any flaws. After, I read the code entirely and double checked on AI’s work to make sure the logic flow is totally correct</td></tr>
+<tr><th scope="row">Alpha-beta cutoff logic</th><td>B</td><td></td></tr>
+<tr><th scope="row">static_eval function body</th><td>B</td><td></td></tr>
+<tr><th scope="row">Utterance generation</th><td>B</td><td>with some other </td></tr>
+<tr><th scope="row">prepare / introduce methods</th><td>B</td><td></td></tr>
+<tr><th scope="row">Any extra-credit components</th><td>B</td><td></td></tr>
+</tbody></table>
+</div>
+<pre>
+9c. What the AI got wrong
+    Describe at least one case where gen-AI produced code or an
+    explanation that was incorrect or misleading, and what you had
+    to do to recognize and fix it.  (If the AI was entirely correct
+    throughout, describe the closest call — a suggestion that
+    required the most careful scrutiny before you accepted it.)
+</pre>
+<div style="color: blue;">
+<p>Something that AI got wong was the implementation of the dialogue, where it got stuck into a feedback loop bug as described above. Another issue that we noticed was that it would only take the first 6 words from the opponent’s quote instead of the full quote, making it sound incomplete. By running the game against another opponent, we were able to fix this issue to make Smirk’s remark sound more natural.</p>
+</div>
+<pre>
+    
+
+9d. One surprising insight from prompting
+    Describe one thing you learned or noticed about AI-assisted
+    coding that surprised you — about the AI's behavior, your own
+    process, or the assignment material itself.
+</pre>
+<div style="color: blue;">
+<p>I noticed that AI can handle this type of assignment in a very good way, especially when you listed out the implementation steps, it will follow it entirely without any error.</p>
+</div>
+<pre>
+    
+
+9e. Prompt log (For the Record)
+    Provide either the full prompting conversation for your
+    AI-assisted coding on this assignment (if not longer than 50K
+    bytes) or just your own prompts if the full conversation is
+    longer.  Do not include code or plan files written to your
+    file system by the agent.  If your prompts involve prompting
+    files (e.g., CLAUDE.md), include them if short (under 5K bytes
+    each); otherwise describe what they contain.
+    This section should not exceed 100K bytes in total.
+  </pre>
+<div style="color: blue;">
+<ol class="prompt-log">
+<li><p>read through files first. do not implement yet</p></li>
+<li><p>I did a implementation for minimax just by following the comment instructions. Check it out and implementing make_moves</p></li>
+<li><p>Please give a round of check on what else we need to implement. Summarize things in a list so it would be easier to see.</p></li>
+<li><p>just pulled the recent version. My partner wrote some. What&#x27;s left?</p></li>
+<li><p>my idea for the persona implementing is to do a ragebaiting bot that would say some irritating quotes and make the opponent mad</p></li>
+<li><p>I searched the LLM API plugins for a bit and are hesitate on doing that. So lets figure out to do this with hand coded rules</p></li>
+<li><p>pulled. Will do zobrist hashing then</p></li>
+<li><p>[Before we begin implementation, inspect the complete CSE 415 K-in-a-Row project repository. Read the assignment specification and relevant starter files, including agent_base.py, game_types.py, RandomPlayer.py, Game_Master_Offline.py, and autograder.py.your goal is to understand the existing architecture and requirements, not to write code. summarize the responsibilities of each file explain how the files interact when an agent makes a move identify the methods i must implement and their exact contracts distinguish autograder requirements from competition optimizations identify common implementation pitfalls and useful extension points for extra credit Do not modify Python files or begin implementation. Explain any uncertainties rather than making unsupported assumptions. Give me a recommended implementation order and identify what I should understand before starting each stage] What should I understand to get started on the implementation and pick up on what my partner has implemented?</p></li>
+<li><p>I should be ready for implementation now, what&#x27;s the best place to start? I’m thinking prepare and then eval. What exactly needs to get done so i can test out the minimal viable product of this implementation?</p></li>
+<li><p>so, do double check for my understanding with prepare, it recieves the information about the game from the game master so that it gives the AI info on the game type, what side to play (i.e x and o), the nickname for the opponent, and the time per move?</p></li>
+<li><p>Before the implementation for static_eval, I want you to tell me what your plan is to implement this method. Also, is the purpose of static_eval is to evaluate which move is the next best move?</p></li>
+<li><p>I&#x27;m ready for the implementation for static_eval, can you help me with the implementation for that? I want to then review it and ask about the implementation to make sure that it&#x27;s correct</p></li>
+<li><p>Can you guide through the difference between recognizing a win in static_eval and stopping search at that in in minimax?</p></li>
+<li><p>So, what I need to recognize is that to make the search more effective and faster, i need to stop when the board has a winner and not necessarily when the board is full. The leaf of the tree should hypothetically be a filled board or a board that has a winner?</p></li>
+<li><p>is it currently not implemented in a way where minimax would stop the search when those conditions are reached?</p></li>
+<li><p>so now that has been implemented, would the next priority be to implement the time management aspect of solving it more efficiently and faster?</p></li>
+<li><p>So, what you&#x27;re proposing is that it finds a move with a shallower search, while in the background it performs a deeper search with a given timeframe. I also would give it a deadline with a small margin so that it can build the return without exceeding the time</p></li>
+<li><p>this is what i&#x27;m thinking: if we&#x27;re given a timeframe that might not allocate a full search, is it possible to implement some priority in what kind of branches are explored?</p></li>
+<li><p>Ok, then can you help me implement the time management aspect?</p></li>
+<li><p>i need to figure out how to resolve these merge conflicts, can you help me resolve them?</p></li>
+<li><p>I&#x27;ve pulled changes and a lot has changed. can you analyze what has changed and describe to me what aspects i can improve on? i was thinking of integrating the gemini api to help with the responses</p></li>
+<li><p>Can you break down to me the exact changes for your timing safeguards that you made, I want to make sure i know what you&#x27;re changing</p></li>
+<li><p>I want to figure out how to shift this to use the Gemini api for the utterances, with the fallback using the code in the KInARow.py.</p></li>
+<li><p>Describe to me your implementation on this history-based game commentary before implementation. My idea is that it would remember the game, observe the opponents moves, record moments, and then build a short story</p></li>
+</ol>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 10 &mdash; Next Steps</b> <i>(1 pt)</i>
+<pre>
+Identify remaining uncertainties or open questions about the
+material.  What would you explore or improve if you had more time?
+What would you do differently if you were starting this assignment
+over today?
+  </pre>
+<div style="color: blue;">
+<p>If we have more time, we would explore the LLM API for demo mode, and use the rule based dialogue as a fallback. An open question would be if it can produce more varied responses within the move so that it can enhance Smirk’s persona. If we were to start again, we would probably establish clearer guidelines on the search, timing, and dialogue together to make integration and testing easier rather than having merge conflicts since we were working with version control.</p>
+</div>
+  </font></td></tr>
+
+  <!-- ============================================================ -->
+  <tr><td><font face="Helvetica">
+  <hr>
+<b>Section 11 &mdash; Extra Credit (if applicable)</b> <i>(bonus pts — see spec)</i>
+<pre>
+For each extra credit option you completed, include a separate
+subsection with:
+  - The option label (e.g., "Part I-A: Child ordering by static eval")
+  - A brief description of how you implemented it
+  - Measurement results (e.g., static evals saved at depth 4 with
+    vs. without ordering; Zobrist hit/miss rates; sample LLM-generated
+    utterances with prompts)
+  - What you learned from the implementation
+
+If you did not complete any extra credit options, omit this section.
+  </pre>
+<div style="color: blue;">
+<p><b>Part I-B: Zobrist hashing</b></p><p>implement Zobrist hashing. I went over the concept then tell Calude what to follow for writing the code out. Measurement results: about 50–57% of lookups hit in timed games. I learned to cooperate with AI agents and reviewed on the XOR bitwise calculation when doing zobrist hashing.</p>
+</div>
+<div style="color: blue;">
+<p><b>Part 2-B: “Tell me how you did that”</b></p><p>This was implemented by preserving the move’s statistics in <code>previous_search</code> before recording the current search. The response records the actual algorithm, deepest completed search depth, evaluation calls, cutoff, and search time statistics.</p>
+<blockquote>
+    <p>
+      <strong>Michael:</strong>
+      Tell me how you did that
+    </p>
+    <p>
+      <strong>Smirk:</strong>
+      "For my previous move at (3, 3): I used minimax with
+      alpha-beta pruning and iterative deepening. My deepest
+      completed iteration was 3 ply, with a backed-up score
+      of 50 (higher favors X, lower favors O)."
+    </p>
+    <p>
+      <strong>Smirk:</strong>
+      "Across this move's search, I made 24,918 static evaluation
+      calls and recorded 3,061 alpha-beta cutoff events in
+      0.8001 seconds, excluding dialogue generation. These
+      totals include repeated positions and any interrupted
+      iteration. Receipts, not vibes."
+    </p>
+  </blockquote>
+<p>From this implementation, we learned to distinguish completed depth from total search work and evaluation calls from unique positions.</p>
+</div>
+<div style="color: blue;">
+<p><b>Part 2-C: &quot;What&#x27;s your take on the game so far?&quot;</b></p><p>The agent uses recorded moves, copied board states, and past dialogue exchanged to make a narrative. It identifies an opening, winning opportunities, and blocked lines.</p>
+<blockquote>
+    <p>
+      <strong>Michael-ExtraCreditDemo:</strong>
+      What's your take on the game so far?
+    </p>
+    <p>
+      <strong>Smirk:</strong>
+      My take, including the move I'm returning now:
+      7 recorded moves. I opened at (2, 3). That's where
+      the plot began. No recorded wins or immediate-threat
+      turning points yet. We're still in the trailer.
+      Earlier you said "I'm taking the center. It's called
+      'being the center of attention.' I've been practicing
+      since birth."; I kept the receipt.
+      My completed 3-ply search favors me. That's an estimate,
+      not a trophy. The game isn't settled.
+    </p>
+  </blockquote>
+<p>For us, a meaningful narrative should mention the game’s action and the conversation history instead of listing evaluation scores. We also Learned to distinguish events and predictions, where a favorable search score doesn’t necessarily mean a gauranteed win.</p>
+</div>
+  </font></td></tr>
+
+  <tr><td><hr></td></tr>
+  <tr><td><font face="Helvetica" size="-1">
+    Learning Diary Entry &mdash; K-in-a-Row Assignment
+  </font></td></tr>
+
+</table>
+</center>
+</main>
+</body>
+</html>

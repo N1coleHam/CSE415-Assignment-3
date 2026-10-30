@@ -1,0 +1,3862 @@
+{
+ "format": "kiar-transcript/1",
+ "round": 1,
+ "game": {
+  "long_name": "Five-in-a-Row on a Seven-by-Seven Board with Corners Forbidden",
+  "short_name": "5-in-a-Row",
+  "k": 5,
+  "n": 7,
+  "m": 7,
+  "turn_limit": 45,
+  "initial_board": [
+   [
+    "-",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    "-"
+   ],
+   [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+   ],
+   [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+   ],
+   [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+   ],
+   [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+   ],
+   [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+   ],
+   [
+    "-",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    "-"
+   ]
+  ],
+  "first_move": "X"
+ },
+ "players": {
+  "X": {
+   "nickname": "Smirk",
+   "long_name": "Smirk the Insufferable",
+   "persona": "smug rage-baiter",
+   "voice_info": {
+    "Chrome": 10,
+    "Firefox": 2,
+    "other": 0
+   }
+  },
+  "O": {
+   "nickname": "Michael",
+   "long_name": "Michael Scott, Regional Manager",
+   "persona": "Michael Scott from The Office: overconfident, needy, accidentally wise",
+   "voice_info": {
+    "Chrome": 10,
+    "Firefox": 2,
+    "other": 0
+   }
+  }
+ },
+ "events": [
+  {
+   "type": "intro",
+   "side": "X",
+   "nickname": "Smirk",
+   "text": "\nMy name is Smirk the Insufferable.\nI was made by Nicole Ham and Rena Yin (n1coleh, yin123).\nI have never lost a game. (I have lost several games.)\nLet's make this quick, I have a nap scheduled.\n"
+  },
+  {
+   "type": "intro",
+   "side": "O",
+   "nickname": "Michael",
+   "text": "\nHi. I'm Michael Scott, Regional Manager of Dunder Mifflin Scranton,\nand World's Best Boss (I bought the mug myself).\nI was built by Ayushi Ghosh and Tanisha Gopinath (ag277, tangops).\nI run on minimax with alpha-beta pruning, which is like delegation:\nyou ignore the branches that don't matter. Like Toby.\nLet's play. Don't worry, I'll go easy on you. (I won't.)\n"
+  },
+  {
+   "type": "gm",
+   "text": "We're playing Five-in-a-Row on a Seven-by-Seven Board with Corners Forbidden."
+  },
+  {
+   "type": "gm",
+   "text": "Let's Play!"
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    2,
+    3
+   ],
+   "utterance": "First move and I'm already winning. Statistically. Probably.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2385,
+    "num_static_evals_this_turn": 24746,
+    "zobrist_table_num_entries_this_turn": 27450,
+    "zobrist_table_num_hits_this_turn": 6492
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    1,
+    3
+   ],
+   "utterance": "Winning? I'll tell you about winning. I invented winning. Well, I'm good at it. I'm taking the center. It's called 'being the center of attention.' I've been practicing since birth.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5504,
+    "alpha_beta_cutoffs_this_turn": 4073,
+    "num_static_evals_this_turn": 42843,
+    "zobrist_table_num_entries_this_turn": 5152,
+    "zobrist_table_num_hits_this_turn": 1540
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    3,
+    3
+   ],
+   "utterance": "Bold claim. Zero evidence. Mid.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2947,
+    "num_static_evals_this_turn": 23899,
+    "zobrist_table_num_entries_this_turn": 27203,
+    "zobrist_table_num_hits_this_turn": 5784
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    4,
+    3
+   ],
+   "utterance": "I'm not losing. I'm... prepping for a comeback. Montage music, please.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5505,
+    "alpha_beta_cutoffs_this_turn": 3125,
+    "num_static_evals_this_turn": 47098,
+    "zobrist_table_num_entries_this_turn": 4288,
+    "zobrist_table_num_hits_this_turn": 1539
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    3,
+    2
+   ],
+   "utterance": "Finally, something we agree on. I've seen better moves from a random number generator.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2257,
+    "num_static_evals_this_turn": 23546,
+    "zobrist_table_num_entries_this_turn": 26143,
+    "zobrist_table_num_hits_this_turn": 6532
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    3,
+    4
+   ],
+   "utterance": "Luck? I don't believe in luck. I believe in alpha-beta pruning and myself. Pruned 3062 branches this turn. I am basically a gardener. A world's best gardener.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5502,
+    "alpha_beta_cutoffs_this_turn": 3062,
+    "num_static_evals_this_turn": 47937,
+    "zobrist_table_num_entries_this_turn": 4159,
+    "zobrist_table_num_hits_this_turn": 1564
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    2,
+    2
+   ],
+   "utterance": "That was math, not fortune. Imagine being Michael right now. Couldn't be me.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2817,
+    "num_static_evals_this_turn": 23413,
+    "zobrist_table_num_entries_this_turn": 26545,
+    "zobrist_table_num_hits_this_turn": 7539
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    1,
+    4
+   ],
+   "utterance": "I'm not a great multitasker, but I AM great at pretending I'm thinking while I play (1, 4).",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5504,
+    "alpha_beta_cutoffs_this_turn": 2806,
+    "num_static_evals_this_turn": 48355,
+    "zobrist_table_num_entries_this_turn": 3952,
+    "zobrist_table_num_hits_this_turn": 1338
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    2,
+    4
+   ],
+   "utterance": "Are you trying, or is this a warm-up?",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3278,
+    "num_static_evals_this_turn": 22873,
+    "zobrist_table_num_entries_this_turn": 26689,
+    "zobrist_table_num_hits_this_turn": 8199
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    2,
+    5
+   ],
+   "utterance": "Great question. I'm not going to answer it, but great question. Look at me, building momentum. Like a snowball rolling down a hill into a Chili's.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.551,
+    "alpha_beta_cutoffs_this_turn": 4039,
+    "num_static_evals_this_turn": 47126,
+    "zobrist_table_num_entries_this_turn": 5017,
+    "zobrist_table_num_hits_this_turn": 2446
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    2,
+    1
+   ],
+   "utterance": "You said: \"Great question. I'm not going to answer it, but great question. Look at me, building momentum. Like a snowball rolling down a hill into a Chili's.\" Did you think of that all by yourself? Go ahead, find it. I'll wait.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3269,
+    "num_static_evals_this_turn": 22690,
+    "zobrist_table_num_entries_this_turn": 26298,
+    "zobrist_table_num_hits_this_turn": 9207
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    2,
+    0
+   ],
+   "utterance": "Denied. Like my application to the FBI. Except this time the denial is deserved. By you.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5505,
+    "alpha_beta_cutoffs_this_turn": 3757,
+    "num_static_evals_this_turn": 47567,
+    "zobrist_table_num_entries_this_turn": 4659,
+    "zobrist_table_num_hits_this_turn": 2927
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    5,
+    2
+   ],
+   "utterance": "Enjoy it while it lasts.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3485,
+    "num_static_evals_this_turn": 22385,
+    "zobrist_table_num_entries_this_turn": 26216,
+    "zobrist_table_num_hits_this_turn": 9306
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    4,
+    2
+   ],
+   "utterance": "Smirk, I respect you as a player. And by respect I mean I'm slightly afraid of you. (4, 2).",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5503,
+    "alpha_beta_cutoffs_this_turn": 2594,
+    "num_static_evals_this_turn": 50249,
+    "zobrist_table_num_entries_this_turn": 3700,
+    "zobrist_table_num_hits_this_turn": 1986
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    4,
+    4
+   ],
+   "utterance": "You said: \"Smirk, I respect you as a player. And by respect I mean I'm slightly afraid of you. (4, 2).\" I'm framing that one. Okay, I'll admit that was fine. Barely.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3228,
+    "num_static_evals_this_turn": 22309,
+    "zobrist_table_num_entries_this_turn": 26119,
+    "zobrist_table_num_hits_this_turn": 8230
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    5,
+    5
+   ],
+   "utterance": "I'm not saying I'm good at this game. I'm saying I've never lost a game that I didn't later reclassify as a draw.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5503,
+    "alpha_beta_cutoffs_this_turn": 3207,
+    "num_static_evals_this_turn": 51329,
+    "zobrist_table_num_entries_this_turn": 4170,
+    "zobrist_table_num_hits_this_turn": 1634
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    1,
+    5
+   ],
+   "utterance": "Correct. And it isn't me. Take your time. I already know how this ends.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3471,
+    "num_static_evals_this_turn": 22189,
+    "zobrist_table_num_entries_this_turn": 26285,
+    "zobrist_table_num_hits_this_turn": 9665
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    1,
+    0
+   ],
+   "utterance": "I've got 3 in a row, and I'm not even trying. That's a lie. I'm trying so hard.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5509,
+    "alpha_beta_cutoffs_this_turn": 2787,
+    "num_static_evals_this_turn": 52589,
+    "zobrist_table_num_entries_this_turn": 3815,
+    "zobrist_table_num_hits_this_turn": 1529
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    1,
+    1
+   ],
+   "utterance": "You said: \"I've got 3 in a row, and I'm not even trying. That's a lie. I'm trying so hard.\" Wow. Really cooked with that one. Cute.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 3794,
+    "num_static_evals_this_turn": 21644,
+    "zobrist_table_num_entries_this_turn": 26273,
+    "zobrist_table_num_hits_this_turn": 11928
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    4,
+    1
+   ],
+   "utterance": "That's what she said! 0.55 seconds to move. That's called 'thinking.' You should try it, Smirk. I mean that kindly.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5512,
+    "alpha_beta_cutoffs_this_turn": 3094,
+    "num_static_evals_this_turn": 52956,
+    "zobrist_table_num_entries_this_turn": 4306,
+    "zobrist_table_num_hits_this_turn": 1960
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    6,
+    4
+   ],
+   "utterance": "Interesting move. Wrong, but interesting.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2841,
+    "num_static_evals_this_turn": 22591,
+    "zobrist_table_num_entries_this_turn": 25950,
+    "zobrist_table_num_hits_this_turn": 7894
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    2,
+    6
+   ],
+   "utterance": "Do I need to be liked? Absolutely not. I like to be liked. But my evaluation hates me right now.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5501,
+    "alpha_beta_cutoffs_this_turn": 2775,
+    "num_static_evals_this_turn": 53721,
+    "zobrist_table_num_entries_this_turn": 4136,
+    "zobrist_table_num_hits_this_turn": 1683
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    5,
+    0
+   ],
+   "utterance": "I'd answer, but you wouldn't understand. Okay, I'll admit that was fine. Barely.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     " ",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 2968,
+    "num_static_evals_this_turn": 22432,
+    "zobrist_table_num_entries_this_turn": 25828,
+    "zobrist_table_num_hits_this_turn": 12024
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    6,
+    5
+   ],
+   "utterance": "I have no idea what you just said, but I respect it. Oh, is that a line of 3? In MY house? It's a very nice line. Someone should do something about it. Not you, Smirk. You can't.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5507,
+    "alpha_beta_cutoffs_this_turn": 5060,
+    "num_static_evals_this_turn": 53207,
+    "zobrist_table_num_entries_this_turn": 6363,
+    "zobrist_table_num_hits_this_turn": 2914
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    3,
+    5
+   ],
+   "utterance": "I know. Thanks for noticing. Cute.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     " ",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 5662,
+    "num_static_evals_this_turn": 18357,
+    "zobrist_table_num_entries_this_turn": 25339,
+    "zobrist_table_num_hits_this_turn": 18847
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    5,
+    1
+   ],
+   "utterance": "I'm not superstitious, but I am a little stitious, and my stitious says I'm winning.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.551,
+    "alpha_beta_cutoffs_this_turn": 4616,
+    "num_static_evals_this_turn": 52931,
+    "zobrist_table_num_entries_this_turn": 6102,
+    "zobrist_table_num_hits_this_turn": 6412
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    1,
+    6
+   ],
+   "utterance": "Big talk. Small results. Take your time. I already know how this ends.",
+   "board": [
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8001,
+    "alpha_beta_cutoffs_this_turn": 8531,
+    "num_static_evals_this_turn": 13229,
+    "zobrist_table_num_entries_this_turn": 25430,
+    "zobrist_table_num_hits_this_turn": 44272
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    0,
+    1
+   ],
+   "utterance": "Well, well, well. This is fine. This is like the time I grilled my foot. I'll recover.",
+   "board": [
+    [
+     "-",
+     "O",
+     " ",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5504,
+    "alpha_beta_cutoffs_this_turn": 4170,
+    "num_static_evals_this_turn": 53314,
+    "zobrist_table_num_entries_this_turn": 6089,
+    "zobrist_table_num_hits_this_turn": 8016
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    0,
+    2
+   ],
+   "utterance": "Interesting move. Wrong, but interesting. I made 11,901 evaluation calls this turn. How many did you make? One?",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     " ",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8002,
+    "alpha_beta_cutoffs_this_turn": 9115,
+    "num_static_evals_this_turn": 11901,
+    "zobrist_table_num_entries_this_turn": 25670,
+    "zobrist_table_num_hits_this_turn": 46321
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    0,
+    3
+   ],
+   "utterance": "My evaluation just called me 'a liability.' I've been called worse. By Angela. Today.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     " ",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5512,
+    "alpha_beta_cutoffs_this_turn": 4990,
+    "num_static_evals_this_turn": 53557,
+    "zobrist_table_num_entries_this_turn": 7301,
+    "zobrist_table_num_hits_this_turn": 10413
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    0,
+    4
+   ],
+   "utterance": "You said: \"My evaluation just called me 'a liability.' I've been called worse. By Angela. Today.\" Groundbreaking. Mid.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     " ",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8001,
+    "alpha_beta_cutoffs_this_turn": 9705,
+    "num_static_evals_this_turn": 9117,
+    "zobrist_table_num_entries_this_turn": 24534,
+    "zobrist_table_num_hits_this_turn": 45295
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    0,
+    5
+   ],
+   "utterance": "Angela has more cats than I have good ideas. And I have a LOT of ideas. I'm ahead, and honestly, I've never felt more like a man named Michael Scott.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     " ",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5516,
+    "alpha_beta_cutoffs_this_turn": 5383,
+    "num_static_evals_this_turn": 53799,
+    "zobrist_table_num_entries_this_turn": 8454,
+    "zobrist_table_num_hits_this_turn": 12750
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    1,
+    2
+   ],
+   "utterance": "Are you trying, or is this a warm-up?",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     " ",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.8001,
+    "alpha_beta_cutoffs_this_turn": 11000,
+    "num_static_evals_this_turn": 5781,
+    "zobrist_table_num_entries_this_turn": 25045,
+    "zobrist_table_num_hits_this_turn": 45305
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    3,
+    0
+   ],
+   "utterance": "Smirk, you're doing amazing. At being my warm-up act.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     " ",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.5509,
+    "alpha_beta_cutoffs_this_turn": 6696,
+    "num_static_evals_this_turn": 53552,
+    "zobrist_table_num_entries_this_turn": 11390,
+    "zobrist_table_num_hits_this_turn": 17980
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    3,
+    1
+   ],
+   "utterance": "You said: \"Smirk, you're doing amazing. At being my warm-up act.\" Did you think of that all by yourself? I've seen better moves from a random number generator.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     " "
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0826,
+    "alpha_beta_cutoffs_this_turn": 1242,
+    "num_static_evals_this_turn": 263,
+    "zobrist_table_num_entries_this_turn": 2628,
+    "zobrist_table_num_hits_this_turn": 4604
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    3,
+    6
+   ],
+   "utterance": "You miss 100% of the shots you don't take. -Wayne Gretzky. -Michael Scott. Shooting at (3, 6).",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     " ",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.1614,
+    "alpha_beta_cutoffs_this_turn": 2292,
+    "num_static_evals_this_turn": 15719,
+    "zobrist_table_num_entries_this_turn": 3978,
+    "zobrist_table_num_hits_this_turn": 5660
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    4,
+    0
+   ],
+   "utterance": "Take your time. I already know how this ends.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     " ",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0005,
+    "alpha_beta_cutoffs_this_turn": 0,
+    "num_static_evals_this_turn": 0,
+    "zobrist_table_num_entries_this_turn": 1,
+    "zobrist_table_num_hits_this_turn": 90
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    4,
+    5
+   ],
+   "utterance": "Winning is great. Losing is great too, apparently, according to the motivational posters. But winning is better.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.0328,
+    "alpha_beta_cutoffs_this_turn": 527,
+    "num_static_evals_this_turn": 3139,
+    "zobrist_table_num_entries_this_turn": 917,
+    "zobrist_table_num_hits_this_turn": 1067
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    4,
+    6
+   ],
+   "utterance": "Correct. And it isn't me. Cute.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     " ",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0004,
+    "alpha_beta_cutoffs_this_turn": 0,
+    "num_static_evals_this_turn": 0,
+    "zobrist_table_num_entries_this_turn": 1,
+    "zobrist_table_num_hits_this_turn": 56
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    5,
+    3
+   ],
+   "utterance": "My evaluation says I'm up by 324. I don't know what that means exactly, but it sounds like a raise.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     " ",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.0061,
+    "alpha_beta_cutoffs_this_turn": 109,
+    "num_static_evals_this_turn": 552,
+    "zobrist_table_num_entries_this_turn": 196,
+    "zobrist_table_num_hits_this_turn": 173
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    5,
+    4
+   ],
+   "utterance": "Mid.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     " "
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0003,
+    "alpha_beta_cutoffs_this_turn": 0,
+    "num_static_evals_this_turn": 0,
+    "zobrist_table_num_entries_this_turn": 1,
+    "zobrist_table_num_hits_this_turn": 30
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    5,
+    6
+   ],
+   "utterance": "You'd better have something up your sleeve, Smirk. Preferably a time machine.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "-",
+     " ",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.001,
+    "alpha_beta_cutoffs_this_turn": 17,
+    "num_static_evals_this_turn": 75,
+    "zobrist_table_num_entries_this_turn": 35,
+    "zobrist_table_num_hits_this_turn": 20
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    6,
+    1
+   ],
+   "utterance": "You said: \"You'd better have something up your sleeve, Smirk. Preferably a time machine.\" Groundbreaking. Are you trying, or is this a warm-up?",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "-",
+     "X",
+     " ",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0002,
+    "alpha_beta_cutoffs_this_turn": 0,
+    "num_static_evals_this_turn": 0,
+    "zobrist_table_num_entries_this_turn": 1,
+    "zobrist_table_num_hits_this_turn": 12
+   }
+  },
+  {
+   "type": "move",
+   "side": "O",
+   "nickname": "Michael",
+   "move": [
+    6,
+    2
+   ],
+   "utterance": "Things are looking good for me. Not that I'm surprised. I'm never surprised. Except by surprise parties.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "-",
+     "X",
+     "O",
+     " ",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "X",
+   "stats": {
+    "seconds": 0.0003,
+    "alpha_beta_cutoffs_this_turn": 1,
+    "num_static_evals_this_turn": 6,
+    "zobrist_table_num_entries_this_turn": 4,
+    "zobrist_table_num_hits_this_turn": 1
+   }
+  },
+  {
+   "type": "move",
+   "side": "X",
+   "nickname": "Smirk",
+   "move": [
+    6,
+    3
+   ],
+   "utterance": "I've seen better moves from a random number generator.",
+   "board": [
+    [
+     "-",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "-"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "O",
+     "O",
+     "X",
+     "X"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "O",
+     "X",
+     "X",
+     "X",
+     "O",
+     "X",
+     "O"
+    ],
+    [
+     "X",
+     "O",
+     "O",
+     "O",
+     "X",
+     "O",
+     "X"
+    ],
+    [
+     "X",
+     "O",
+     "X",
+     "O",
+     "X",
+     "O",
+     "O"
+    ],
+    [
+     "-",
+     "X",
+     "O",
+     "X",
+     "X",
+     "O",
+     "-"
+    ]
+   ],
+   "whose_move": "O",
+   "stats": {
+    "seconds": 0.0002,
+    "alpha_beta_cutoffs_this_turn": 0,
+    "num_static_evals_this_turn": 0,
+    "zobrist_table_num_entries_this_turn": 1,
+    "zobrist_table_num_hits_this_turn": 2
+   }
+  },
+  {
+   "type": "result",
+   "text": "Game Over; it's a draw",
+   "winner": null
+  }
+ ]
+}

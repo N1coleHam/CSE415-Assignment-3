@@ -653,8 +653,7 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
             return None
         self.last_reply_category = category
         if category == 'quote_back':
-            snippet = ' '.join(remark.split()[:6]).rstrip('.!?,')
-            return '"' + snippet + '"? ' + self.pick('quote_back', fields)
+            return 'You said: "' + remark + '" ' + self.pick('quote_back', fields)
         return self.pick(category, fields)
 
     # The twin says everything with fake politeness tacked on.
@@ -739,14 +738,14 @@ class OurAgent(KAgent):  # Keep the class name "OurAgent" so a game master
         if not notable:
             parts.append("No recorded wins or immediate-threat turning points yet. We're still in the trailer.")
 
-        # Quote an earlier opponent remark, not this request or our own reply.
+        # Quote an entire earlier opponent remark, not this request or our own reply.
         quotes = [entry['utterance'] for entry in self.game_history
                   if entry['player'] == other(self.playing) and entry['utterance']
                   and entry['utterance'] not in GAME_MASTER_REMARKS
                   and not any(trigger in entry['utterance'].lower()
                               for trigger in ('take on the game', 'game so far', 'did that', 'do that'))]
         if quotes:
-            quote = ' '.join(quotes[-1].split()[:10])[:100].replace('"', "'")
+            quote = quotes[-1].strip()
             parts.append(f'Earlier you said "{quote}"; I kept the receipt.')
 
         latest = moves[-1]

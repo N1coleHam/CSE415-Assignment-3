@@ -1,0 +1,624 @@
+The Gamemaster says, "Players, introduce yourselves."
+     (Playing X:) 
+My name is Smirk the Insufferable.
+I was made by Nicole Ham and Rena Yin (n1coleh, yin123).
+I have never lost a game. (I have lost several games.)
+Let's make this quick, I have a nap scheduled.
+
+     (Playing O:) 
+Hi. I'm Michael Scott, Regional Manager of Dunder Mifflin Scranton,
+and World's Best Boss (I bought the mug myself).
+I was built by Ayushi Ghosh and Tanisha Gopinath (ag277, tangops).
+I run on minimax with alpha-beta pruning, which is like delegation:
+you ignore the branches that don't matter. Like Toby.
+Let's play. Don't worry, I'll go easy on you. (I won't.)
+
+The Gamemaster says: We're playing Five-in-a-Row on a Seven-by-Seven Board with Corners Forbidden.
+The Gamemaster says: Let's Play!
+The initial state is...
++---------------------+
+| -                 - |
+|                     |
+|                     |
+|                     |
+|                     |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (2, 3)
+Smirk says: First move and I'm already winning. Statistically. Probably.
++---------------------+
+| -                 - |
+|                     |
+|          X          |
+|                     |
+|                     |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (1, 3)
+Michael says: Winning? I'll tell you about winning. I invented winning. Well, I'm good at it. I'm taking the center. It's called 'being the center of attention.' I've been practicing since birth.
++---------------------+
+| -                 - |
+|          O          |
+|          X          |
+|                     |
+|                     |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (3, 3)
+Smirk says: Bold claim. Zero evidence. Mid.
++---------------------+
+| -                 - |
+|          O          |
+|          X          |
+|          X          |
+|                     |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (4, 3)
+Michael says: I'm not losing. I'm... prepping for a comeback. Montage music, please.
++---------------------+
+| -                 - |
+|          O          |
+|          X          |
+|          X          |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (3, 2)
+Smirk says: Finally, something we agree on. I've seen better moves from a random number generator.
++---------------------+
+| -                 - |
+|          O          |
+|          X          |
+|       X  X          |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (3, 4)
+Michael says: Luck? I don't believe in luck. I believe in alpha-beta pruning and myself. Pruned 3062 branches this turn. I am basically a gardener. A world's best gardener.
++---------------------+
+| -                 - |
+|          O          |
+|          X          |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (2, 2)
+Smirk says: That was math, not fortune. Imagine being Michael right now. Couldn't be me.
++---------------------+
+| -                 - |
+|          O          |
+|       X  X          |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (1, 4)
+Michael says: I'm not a great multitasker, but I AM great at pretending I'm thinking while I play (1, 4).
++---------------------+
+| -                 - |
+|          O  O       |
+|       X  X          |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (2, 4)
+Smirk says: Are you trying, or is this a warm-up?
++---------------------+
+| -                 - |
+|          O  O       |
+|       X  X  X       |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (2, 5)
+Michael says: Great question. I'm not going to answer it, but great question. Look at me, building momentum. Like a snowball rolling down a hill into a Chili's.
++---------------------+
+| -                 - |
+|          O  O       |
+|       X  X  X  O    |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (2, 1)
+Smirk says: You said: "Great question. I'm not going to answer it, but great question. Look at me, building momentum. Like a snowball rolling down a hill into a Chili's." Did you think of that all by yourself? Go ahead, find it. I'll wait.
++---------------------+
+| -                 - |
+|          O  O       |
+|    X  X  X  X  O    |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (2, 0)
+Michael says: Denied. Like my application to the FBI. Except this time the denial is deserved. By you.
++---------------------+
+| -                 - |
+|          O  O       |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|          O          |
+|                     |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (5, 2)
+Smirk says: Enjoy it while it lasts.
++---------------------+
+| -                 - |
+|          O  O       |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|          O          |
+|       X             |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (4, 2)
+Michael says: Smirk, I respect you as a player. And by respect I mean I'm slightly afraid of you. (4, 2).
++---------------------+
+| -                 - |
+|          O  O       |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O          |
+|       X             |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (4, 4)
+Smirk says: You said: "Smirk, I respect you as a player. And by respect I mean I'm slightly afraid of you. (4, 2)." I'm framing that one. Okay, I'll admit that was fine. Barely.
++---------------------+
+| -                 - |
+|          O  O       |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O  X       |
+|       X             |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (5, 5)
+Michael says: I'm not saying I'm good at this game. I'm saying I've never lost a game that I didn't later reclassify as a draw.
++---------------------+
+| -                 - |
+|          O  O       |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O  X       |
+|       X        O    |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (1, 5)
+Smirk says: Correct. And it isn't me. Take your time. I already know how this ends.
++---------------------+
+| -                 - |
+|          O  O  X    |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O  X       |
+|       X        O    |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (1, 0)
+Michael says: I've got 3 in a row, and I'm not even trying. That's a lie. I'm trying so hard.
++---------------------+
+| -                 - |
+| O        O  O  X    |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O  X       |
+|       X        O    |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (1, 1)
+Smirk says: You said: "I've got 3 in a row, and I'm not even trying. That's a lie. I'm trying so hard." Wow. Really cooked with that one. Cute.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|       O  O  X       |
+|       X        O    |
+| -                 - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (4, 1)
+Michael says: That's what she said! 0.55 seconds to move. That's called 'thinking.' You should try it, Smirk. I mean that kindly.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|    O  O  O  X       |
+|       X        O    |
+| -                 - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (6, 4)
+Smirk says: Interesting move. Wrong, but interesting.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O    |
+|       X  X  O       |
+|    O  O  O  X       |
+|       X        O    |
+| -           X     - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (2, 6)
+Michael says: Do I need to be liked? Absolutely not. I like to be liked. But my evaluation hates me right now.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O  O |
+|       X  X  O       |
+|    O  O  O  X       |
+|       X        O    |
+| -           X     - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (5, 0)
+Smirk says: I'd answer, but you wouldn't understand. Okay, I'll admit that was fine. Barely.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O  O |
+|       X  X  O       |
+|    O  O  O  X       |
+| X     X        O    |
+| -           X     - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (6, 5)
+Michael says: I have no idea what you just said, but I respect it. Oh, is that a line of 3? In MY house? It's a very nice line. Someone should do something about it. Not you, Smirk. You can't.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O  O |
+|       X  X  O       |
+|    O  O  O  X       |
+| X     X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (3, 5)
+Smirk says: I know. Thanks for noticing. Cute.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X     X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (5, 1)
+Michael says: I'm not superstitious, but I am a little stitious, and my stitious says I'm winning.
++---------------------+
+| -                 - |
+| O  X     O  O  X    |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (1, 6)
+Smirk says: Big talk. Small results. Take your time. I already know how this ends.
++---------------------+
+| -                 - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (0, 1)
+Michael says: Well, well, well. This is fine. This is like the time I grilled my foot. I'll recover.
++---------------------+
+| -  O              - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (0, 2)
+Smirk says: Interesting move. Wrong, but interesting. I made 11,901 evaluation calls this turn. How many did you make? One?
++---------------------+
+| -  O  X           - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (0, 3)
+Michael says: My evaluation just called me 'a liability.' I've been called worse. By Angela. Today.
++---------------------+
+| -  O  X  O        - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (0, 4)
+Smirk says: You said: "My evaluation just called me 'a liability.' I've been called worse. By Angela. Today." Groundbreaking. Mid.
++---------------------+
+| -  O  X  O  X     - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (0, 5)
+Michael says: Angela has more cats than I have good ideas. And I have a LOT of ideas. I'm ahead, and honestly, I've never felt more like a man named Michael Scott.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X     O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (1, 2)
+Smirk says: Are you trying, or is this a warm-up?
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+|       X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (3, 0)
+Michael says: Smirk, you're doing amazing. At being my warm-up act.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O     X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (3, 1)
+Smirk says: You said: "Smirk, you're doing amazing. At being my warm-up act." Did you think of that all by yourself? I've seen better moves from a random number generator.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X    |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (3, 6)
+Michael says: You miss 100% of the shots you don't take. -Wayne Gretzky. -Michael Scott. Shooting at (3, 6).
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+|    O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (4, 0)
+Smirk says: Take your time. I already know how this ends.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X       |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (4, 5)
+Michael says: Winning is great. Losing is great too, apparently, according to the motivational posters. But winning is better.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O    |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (4, 6)
+Smirk says: Correct. And it isn't me. Cute.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X        O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (5, 3)
+Michael says: My evaluation says I'm up by 324. I don't know what that means exactly, but it sounds like a raise.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O     O    |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (5, 4)
+Smirk says: Mid.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O    |
+| -           X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (5, 6)
+Michael says: You'd better have something up your sleeve, Smirk. Preferably a time machine.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O  O |
+| -           X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (6, 1)
+Smirk says: You said: "You'd better have something up your sleeve, Smirk. Preferably a time machine." Groundbreaking. Are you trying, or is this a warm-up?
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O  O |
+| -  X        X  O  - |
++---------------------+
+It is O's turn to move.
+
+Move is by O to (6, 2)
+Michael says: Things are looking good for me. Not that I'm surprised. I'm never surprised. Except by surprise parties.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O  O |
+| -  X  O     X  O  - |
++---------------------+
+It is X's turn to move.
+
+Move is by X to (6, 3)
+Smirk says: I've seen better moves from a random number generator.
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O  O |
+| -  X  O  X  X  O  - |
++---------------------+
+It is O's turn to move.
+
++---------------------+
+| -  O  X  O  X  O  - |
+| O  X  X  O  O  X  X |
+| O  X  X  X  X  O  O |
+| O  X  X  X  O  X  O |
+| X  O  O  O  X  O  X |
+| X  O  X  O  X  O  O |
+| -  X  O  X  X  O  - |
++---------------------+
+Game over; it's a draw.
